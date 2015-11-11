@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Kalendar"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Tasvir"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Kamera"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Ovoz"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Yana"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Videolar"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Audio fayllar"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Kontaktlar"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Fayllarim"
+

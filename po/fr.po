@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Calendrier"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Images"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Photo"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Voix"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Plus"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Vidéos"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Fichiers audio"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Contacts"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Mes fichiers"
+

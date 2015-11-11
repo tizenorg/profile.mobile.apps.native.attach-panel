@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Takvim"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Resmlr"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Kamera"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Ses"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Dha çk"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Videolar"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Ses dosyaları"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Kişiler"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Dosyalarım"
+

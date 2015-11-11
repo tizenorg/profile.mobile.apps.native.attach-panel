@@ -1,0 +1,9 @@
+libdir=@LIBDIR@
+includedir=@INCLUDEDIR@
+
+Name: attach-panel
+Description: attach-panel supporting library
+Version: @VERSION@
+Requires: ui-gadget-1 capi-base-common
+Libs: -L${libdir} -lattach-panel
+Cflags: -I${includedir}

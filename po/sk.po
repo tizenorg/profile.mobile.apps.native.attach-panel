@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Kalendár"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Fotogr."
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Fotoap."
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Hlas"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Ďalšie"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Videá"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Zvukové súbory"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Kontakty"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Moje súbory"
+

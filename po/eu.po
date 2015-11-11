@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Egutegia"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Irudiak"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Kamera"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Ahotsa"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Gehia."
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Bideoak"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Audio fitxategiak"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Kontaktuak"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Nire fitxat."
+

@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Féilire"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Íomhánna"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Ceam."
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Guth"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Tuill."
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Físeáin"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Comhaid fuaime"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Teagmhálaithe"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Mo Chomhaid"
+

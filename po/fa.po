@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "تقویم"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "تصاویر"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "دوربين"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "صدا"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "بیشتر"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "ویدیوها"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "فایل‌های صوتی"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "مخاطبين"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "فایل‌های من"
+

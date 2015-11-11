@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "ಕ್ಯಾಲೆಂಡರ್"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "ಚಿತ್ರಗಳು"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "ಕ್ಯಾಮರಾ"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "ಧ್ವನಿ"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "ಹೆಚ್ಚು"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "ವೀಡಿಯೊಗಳು"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "ಆಡಿಯೋ ಫೈಲ್‌ಗಳು"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "ಸಂಪರ್ಕಗಳು"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "ನನ್ನ ಫೈಲ್‌ಗಳು"
+

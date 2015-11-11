@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Kalendar"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Slike"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Kamera"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Govor"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Još"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Video zapisi"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Audio fajlovi"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Kontakti"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Moji fajlovi"
+

@@ -1,0 +1,27 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Agenda"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Afbld."
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Camera"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Spraak"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Meer"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Video's"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Audio-\nbestanden"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Contacten"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Mijn bestanden"
+
