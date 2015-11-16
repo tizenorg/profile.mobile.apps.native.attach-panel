@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
+#include <aul.h>
 #include <app_control.h>
 #include <Elementary.h>
+#include <rua.h>
 
 #include "attach_panel.h"
 #include "attach_panel_internal.h"
 #include "attach_bundle.h"
 #include "conf.h"
+#include "content_list.h"
 #include "gesture.h"
 #include "grid.h"
 #include "log.h"
@@ -58,7 +61,7 @@ Eina_Bool _grid_can_flick(attach_panel_h attach_panel)
 		}
 	}
 
-	current_content_info = eina_list_nth(attach_panel->content_list, attach_panel->current_page);
+	current_content_info = eina_list_nth(attach_panel->content_list, attach_panel->cur_page_no);
 	retv_if(!current_content_info, EINA_TRUE);
 
 	if (attach_panel->grid != current_content_info->content) {
@@ -88,12 +91,14 @@ static char *__text_get(void *data, Evas_Object *obj, const char *part)
 {
 	content_s *info = data;
 	innate_content_s *innate_content_info = NULL;
+	char *buf = NULL;
 	retv_if(!info, NULL);
 
 	innate_content_info = info->innate_content_info;
 	retv_if(!innate_content_info, NULL);
 	if (!strcmp(part, "elm.text")) {
-		return strdup(D_(innate_content_info->name));
+		buf = elm_entry_utf8_to_markup(D_(innate_content_info->name));
+		return buf;
 	}
 
 	return NULL;
@@ -189,19 +194,40 @@ static void __del(void *data, Evas_Object *obj)
 static void __reply_cb(app_control_h request, app_control_h reply, app_control_result_e result, void *user_data)
 {
 	content_s *content_info = user_data;
+	char **select = NULL;
+	int i = 0;
+	int length = 0;
+	int ret = APP_CONTROL_ERROR_NONE;
 
 	ret_if(!content_info);
 	ret_if(!content_info->attach_panel);
+
+	/* This is just for protocol log */
+	_D("relay callback is called");
+	ret = app_control_get_extra_data_array(reply, "http://tizen.org/appcontrol/data/selected", &select, &length);
+	if (APP_CONTROL_ERROR_NONE == ret && select) {
+		for (i = 0; i < length; i++) {
+			_D("selected is %s[%d]", select[i], i);
+		}
+	}
+
+	ret = app_control_get_extra_data_array(reply, "http://tizen.org/appcontrol/data/path", &select, &length);
+	if (APP_CONTROL_ERROR_NONE == ret && select) {
+		for (i = 0; i < length; i++) {
+			_D("path is %s[%d]", select[i], i);
+		}
+	}
 
 	if (content_info->attach_panel->result_cb) {
 		content_info->attach_panel->result_cb(content_info->attach_panel
 				, content_info->innate_content_info->content_category
 				, reply
+				, result
 				, content_info->attach_panel->result_data);
 
 		if (ATTACH_PANEL_STATE_FULL == _gesture_get_state()) {
-			/* This is same with attach_panel_hide */
-			//_content_list_set_pause(content_info->attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+			/* This is same with attach_panel_hide() */
+			_content_list_set_pause(content_info->attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 			_gesture_hide(content_info->attach_panel);
 		}
 	} else {
@@ -227,33 +253,47 @@ static void __launch_app(content_s *content_info)
 	ret_if(APP_CONTROL_ERROR_NONE != ret);
 
 	if (content_info->innate_content_info->operation) {
-		app_control_set_operation(app_control, content_info->innate_content_info->operation);
+		ret = app_control_set_operation(app_control, content_info->innate_content_info->operation);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to set operation");
 	}
 
 	if (content_info->innate_content_info->mode) {
 		snprintf(value, sizeof(value), "%d", content_info->innate_content_info->mode);
-		app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/mode", value);
+		ret = app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/mode", value);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to add 'http://tizen.org/appcontrol/data/mode'");
 	}
 
-	if (content_info->innate_content_info->result_type) {
-		app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/result_type", content_info->innate_content_info->result_type);
+	if (content_info->innate_content_info->type) {
+		ret = app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/type", content_info->innate_content_info->type);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to add 'http://tizen.org/appcontrol/data/type'");
 	}
 
 	if (content_info->innate_content_info->item_type) {
-		app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/item_type", content_info->innate_content_info->item_type);
+		ret = app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/item_type", content_info->innate_content_info->item_type);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to add 'http://tizen.org/appcontrol/data/item_type'");
 	}
 
 	if (content_info->innate_content_info->selection_mode) {
-		app_control_add_extra_data(app_control, APP_CONTROL_DATA_SELECTION_MODE, content_info->innate_content_info->selection_mode);
+		ret = app_control_add_extra_data(app_control, APP_CONTROL_DATA_SELECTION_MODE, content_info->innate_content_info->selection_mode);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to add APP_CONTROL_DATA_SELECTION_MODE");
 	}
 
 	if (content_info->innate_content_info->mime) {
-		app_control_set_mime(app_control, content_info->innate_content_info->mime);
+		ret = app_control_set_mime(app_control, content_info->innate_content_info->mime);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to set mime");
 	}
 
 	if (content_info->innate_content_info->max) {
 		snprintf(value, sizeof(value), "%d", content_info->innate_content_info->max);
-		app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/max", value);
+		ret = app_control_add_extra_data(app_control, "http://tizen.org/appcontrol/data/max", value);
+		if (APP_CONTROL_ERROR_NONE != ret)
+			_E("Fail to add 'http://tizen.org/appcontrol/data/max'");
 	}
 
 	if (content_info->extra_data) {
@@ -261,9 +301,28 @@ static void __launch_app(content_s *content_info)
 		_bundle_add_to_app_control(content_info->extra_data, app_control);
 	}
 
-	app_control_set_launch_mode(app_control, APP_CONTROL_LAUNCH_MODE_GROUP);
+#if 0 /* privilege_checker is not included in the 3.0 */
+	ret = app_control_add_extra_data(app_control, AUL_SVC_K_RUA_STAT_CALLER, "attach-panel");
+	if (APP_CONTROL_ERROR_NONE != ret)
+		_E("Fail to add 'AUL_SVC_K_RUA_STAT_CALLER'");
 
-	app_control_send_launch_request(app_control, __reply_cb, content_info);
+	ret = app_control_add_extra_data(app_control, AUL_SVC_K_RUA_STAT_TAG, content_info->innate_content_info->appid);
+	if (APP_CONTROL_ERROR_NONE != ret)
+		_E("Fail to add 'AUL_SVC_K_RUA_STAT_TAG'");
+#endif
+
+	ret = app_control_add_extra_data(app_control, "__CALLER_PANEL__", "attach-panel");
+	if (APP_CONTROL_ERROR_NONE != ret)
+		_E("Fail to add '__CALLER_PANEL__'");
+
+	ret = app_control_set_launch_mode(app_control, APP_CONTROL_LAUNCH_MODE_GROUP);
+	if (APP_CONTROL_ERROR_NONE != ret)
+		_E("Fail to set launch mode");
+
+	ret = app_control_send_launch_request(app_control, __reply_cb, content_info);
+	if (APP_CONTROL_ERROR_NONE != ret)
+		_E("Fail to send launch request");
+
 	app_control_destroy(app_control);
 }
 
@@ -299,10 +358,6 @@ Eina_Bool __animator_cb(void *data)
 
 	int index = 0;
 	int count = 0;
-	int sum = 0;
-	int i = 0;
-	static int column = 0;
-	static int row = 0;
 
 	retv_if(!grid, ECORE_CALLBACK_CANCEL);
 
@@ -316,26 +371,14 @@ Eina_Bool __animator_cb(void *data)
 
 	count = eina_list_count(list);
 	if (index == count) goto OUT;
-
-	if (!index) {
-		int grid_w;
-		int grid_h;
-		evas_object_geometry_get(grid, NULL, NULL, &grid_w, &grid_h);
-		int w = (int) evas_object_data_get(grid, PRIVATE_DATA_KEY_ITEM_WIDTH);
-		int h = (int) evas_object_data_get(grid, PRIVATE_DATA_KEY_ITEM_HEIGHT);
-		if (w) {
-			column = grid_w / w;
-			row = (int) ceil((double) ((double) grid_h / (double) h));
+	info = eina_list_nth(list, index);
+	if (info && info->innate_content_info) {
+		if (!info->innate_content_info->is_ug) {
+			elm_gengrid_item_append(grid, gic, info, __item_selected, info);
 		}
 	}
-
-	sum = column * row;
-	for (; i < sum; ++i) {
-		info = eina_list_nth(list, index);
-		elm_gengrid_item_append(grid, gic, info, __item_selected, info);
-		index++;
-		if (index == count) goto OUT;
-	}
+	index++;
+	if (index == count) goto OUT;
 	evas_object_data_set(grid, PRIVATE_DATA_KEY_LIST_INDEX, (void *) index);
 
 	return ECORE_CALLBACK_RENEW;
@@ -351,6 +394,26 @@ OUT:
 	evas_object_data_del(grid, PRIVATE_DATA_KEY_ANIMATOR);
 
 	return ECORE_CALLBACK_CANCEL;
+}
+
+
+
+void _grid_refresh(Evas_Object *grid)
+{
+	Ecore_Animator *anim = NULL;
+
+	ret_if(!grid);
+
+	elm_gengrid_clear(grid);
+
+	anim = evas_object_data_del(grid, PRIVATE_DATA_KEY_ANIMATOR);
+	if (anim) {
+		ecore_animator_del(anim);
+	}
+	anim = ecore_animator_add(__animator_cb, grid);
+	ret_if(!anim);
+
+	evas_object_data_set(grid, PRIVATE_DATA_KEY_ANIMATOR, anim);
 }
 
 
@@ -416,6 +479,7 @@ Evas_Object *_grid_create(Evas_Object *page, attach_panel_h attach_panel)
 	elm_gengrid_align_set(grid, 0.0, 0.0);
 	elm_gengrid_horizontal_set(grid, EINA_FALSE);
 	elm_gengrid_multi_select_set(grid, EINA_FALSE);
+	elm_object_style_set(grid, "popup");
 
 	gic = elm_gengrid_item_class_new();
 	goto_if(!gic, ERROR);
@@ -423,7 +487,7 @@ Evas_Object *_grid_create(Evas_Object *page, attach_panel_h attach_panel)
 	gic->func.content_get = __content_get;
 	gic->func.state_get = NULL;
 	gic->func.del = __del;
-	gic->item_style = "type2";
+	gic->item_style = "default";
 
 	evas_object_data_set(grid, PRIVATE_DATA_KEY_GRID_LIST, attach_panel->content_list);
 	evas_object_data_set(grid, PRIVATE_DATA_KEY_GIC, gic);

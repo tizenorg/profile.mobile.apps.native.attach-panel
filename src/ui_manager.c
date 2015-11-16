@@ -16,6 +16,7 @@
 
 #include <Elementary.h>
 #include <bundle.h>
+#include <efl_extension.h>
 #include <ui-gadget.h>
 #include <ui-gadget-module.h>
 
@@ -24,6 +25,7 @@
 #include "conf.h"
 #include "content_list.h"
 #include "gesture.h"
+#include "list.h"
 #include "log.h"
 #include "page.h"
 #include "scroller.h"
@@ -38,7 +40,7 @@ static const char *const GROUP_LAYOUT = "layout";
 
 
 
-static Evas_Object *__create_content(Evas_Object *page, content_s *content_info, attach_panel_h attach_panel)
+Evas_Object *_ui_manager_create_content(Evas_Object *page, content_s *content_info, attach_panel_h attach_panel)
 {
 	Evas_Object *content = NULL;
 	Elm_Object_Item *item = NULL;
@@ -76,6 +78,7 @@ static Evas_Object *__create_content(Evas_Object *page, content_s *content_info,
 	}
 
 	evas_object_size_hint_weight_set(content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_object_part_content_set(page, "content", content);
 
 	evas_object_data_set(content, DATA_KEY_PAGE, page);
 
@@ -84,7 +87,7 @@ static Evas_Object *__create_content(Evas_Object *page, content_s *content_info,
 
 
 
-static void __destroy_content(content_s *content_info, attach_panel_h attach_panel)
+void _ui_manager_destroy_content(content_s *content_info, attach_panel_h attach_panel)
 {
 	ret_if(!content_info->content);
 	ret_if(!attach_panel);
@@ -128,6 +131,7 @@ int _ui_manager_append_content_category(Evas_Object *ui_manager, innate_content_
 	content_info->attach_panel = attach_panel;
 	content_info->innate_content_info = innate_content_info;
 	content_info->extra_data = extra_data;
+	content_info->order = ORDER_MAX;
 
 	if (innate_content_info->is_ug) {
 		/* UG side */
@@ -138,6 +142,8 @@ int _ui_manager_append_content_category(Evas_Object *ui_manager, innate_content_
 		content_info->tabbar_item =
 			_toolbar_append_item(attach_panel->toolbar, innate_content_info->name, page);
 		goto_if(!content_info->tabbar_item, ERROR);
+		content_info->content = NULL;
+		content_info->order = 0;
 	} else {
 		/* App side */
 		if (attach_panel->grid) {
@@ -160,11 +166,12 @@ int _ui_manager_append_content_category(Evas_Object *ui_manager, innate_content_
 			attach_panel->grid_tabbar_item = content_info->tabbar_item;
 			goto_if(!content_info->tabbar_item, ERROR);
 		}
+		content_info->content = _ui_manager_create_content(page, content_info, attach_panel);
+		goto_if(!content_info->content, ERROR);
+		elm_object_part_content_set(page, "content", content_info->content);
 	}
 
-	content_info->content = __create_content(page, content_info, attach_panel);
-	goto_if(!content_info->content, ERROR);
-	elm_object_part_content_set(page, "content", content_info->content);
+	content_info->page = page;
 
 	if (1 == _toolbar_count_item(attach_panel->toolbar)) {
 		_toolbar_bring_in(attach_panel->toolbar, content_info->tabbar_item);
@@ -177,7 +184,7 @@ int _ui_manager_append_content_category(Evas_Object *ui_manager, innate_content_
 
 ERROR:
 	if (content_info->tabbar_item) _toolbar_remove_item(attach_panel->toolbar, content_info->tabbar_item);
-	if (content_info->content) __destroy_content(content_info, attach_panel);
+	if (content_info->content) _ui_manager_destroy_content(content_info, attach_panel);
 	if (page) _page_destroy(page);
 	free(content_info);
 
@@ -192,12 +199,11 @@ void _ui_manager_remove_content_category(Evas_Object *ui_manager, content_s *con
 
 	ret_if(!ui_manager);
 	ret_if(!content_info);
-	ret_if(!content_info->content);
 
 	attach_panel = evas_object_data_get(ui_manager, DATA_KEY_ATTACH_PANEL_INFO);
 	ret_if(!attach_panel);
 
-	__destroy_content(content_info, attach_panel);
+	_ui_manager_destroy_content(content_info, attach_panel);
 
 	if (content_info->innate_content_info->is_ug
 		|| !attach_panel->grid) {
@@ -227,7 +233,7 @@ static void __remove_content_categories(Evas_Object *ui_manager)
 	EINA_LIST_FREE(attach_panel->content_list, content_info) {
 		Evas_Object *page = NULL;
 
-		__destroy_content(content_info, attach_panel);
+		_ui_manager_destroy_content(content_info, attach_panel);
 		page= evas_object_data_get(content_info->content, DATA_KEY_PAGE);
 		if (page) {
 			elm_object_part_content_unset(page, "content");
@@ -260,13 +266,61 @@ static void _change_tab_cb(Evas_Object *toolbar, int event_type, void *event_inf
 {
 	attach_panel_h attach_panel = data;
 	Evas_Object *page = event_info;
+	content_s *content_info = NULL;
 
 	ret_if(!attach_panel);
 	ret_if(!attach_panel->toolbar);
 	ret_if(!attach_panel->scroller);
 	ret_if(!page);
 
-	_scroller_bring_in_page(attach_panel->scroller, page, &attach_panel->current_page);
+	content_info = eina_list_nth(attach_panel->content_list, attach_panel->cur_page_no);
+	ret_if(!content_info);
+	ret_if(!content_info->innate_content_info);
+
+	if (EINA_TRUE == attach_panel->is_delete) {
+		_D("This is attach_panel_destroy");
+		return;
+	}
+
+	if (page == content_info->page) {
+		_D("Tab the same page");
+		return;
+	}
+
+	if (ATTACH_PANEL_STATE_HIDE == _gesture_get_state()) {
+		_D("state of attach_panel is hide state");
+		return;
+	}
+
+	/* TODO : destroy the ug when page is not shown
+
+	if (content_info->innate_content_info->is_ug) {
+		_ui_manager_destroy_content(content_info, attach_panel);
+		content_info->content = NULL;
+	} */
+
+	_scroller_bring_in_page(attach_panel->scroller, page, &attach_panel->cur_page_no);
+	content_info = eina_list_nth(attach_panel->content_list, attach_panel->cur_page_no);
+	ret_if(!content_info);
+	ret_if(!content_info->innate_content_info);
+
+	if (!content_info->innate_content_info->is_ug) {
+		return;
+	}
+
+	if (content_info->content) {
+		return;
+	}
+
+	_D("change tab for create ug (%s)", content_info->innate_content_info->appid);
+
+	content_info->content = _ui_manager_create_content(content_info->page, content_info, attach_panel);
+	ret_if(!content_info->content);
+	if (ATTACH_PANEL_STATE_FULL == _gesture_get_state()) {
+		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_MULTIPLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	} else {
+		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_SINGLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	}
 }
 
 
@@ -296,7 +350,10 @@ static void __window_resume_cb(void *data, Evas_Object *scroller, void *event_in
 	}
 
 	_D("caller window is resumed");
-	//_content_list_set_resume(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	_content_list_set_resume(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+
+	attach_panel->content_list = _list_sort_by_rua(attach_panel->content_list);
+	_grid_refresh(attach_panel->grid);
 }
 
 
@@ -312,7 +369,7 @@ static void __window_pause_cb(void *data, Evas_Object *scroller, void *event_inf
 	}
 
 	_D("caller window is paused");
-	//_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 }
 
 
@@ -332,8 +389,28 @@ static void __keypad_on_cb(void *data, Evas_Object *obj, void *event_info)
 
 	_D("keypad state on");
 
+	if (ATTACH_PANEL_STATE_HIDE == _gesture_get_state()) {
+		_D("attach panel is already hide");
+		return;
+	}
 	/* This is same with attach_panel_hide */
-	//_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	_gesture_hide(attach_panel);
+}
+
+
+
+static void __key_back_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	attach_panel_h attach_panel = data;
+	ret_if(!attach_panel);
+
+	if (ATTACH_PANEL_STATE_HIDE == _gesture_get_state()) {
+		_D("attach panel is already hide");
+		return;
+	}
+	/* This is same with attach_panel_hide() */
+	_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 	_gesture_hide(attach_panel);
 }
 
@@ -392,6 +469,7 @@ Evas_Object *_ui_manager_create(attach_panel_h attach_panel)
 	evas_object_smart_callback_add(parent, "iconified", __window_pause_cb, attach_panel);
 	evas_object_smart_callback_add(attach_panel->conformant, "language,changed", __lang_changed_cb, NULL);
 	evas_object_smart_callback_add(attach_panel->conformant, "virtualkeypad,state,on", __keypad_on_cb, attach_panel);
+	eext_object_event_callback_add(ui_manager, EEXT_CALLBACK_BACK, __key_back_cb, attach_panel);
 
 	return ui_manager;
 
@@ -420,6 +498,7 @@ void _ui_manager_destroy(Evas_Object *ui_manager)
 	attach_panel = evas_object_data_del(ui_manager, DATA_KEY_ATTACH_PANEL_INFO);
 	ret_if(!attach_panel);
 
+	eext_object_event_callback_del(ui_manager, EEXT_CALLBACK_BACK, __key_back_cb);
 	evas_object_smart_callback_del(attach_panel->conformant, "virtualkeypad,state,on", __keypad_on_cb);
 	evas_object_smart_callback_del(attach_panel->conformant, "language,changed", __lang_changed_cb);
 	evas_object_event_callback_del(ui_manager, EVAS_CALLBACK_RESIZE, __resize_cb);

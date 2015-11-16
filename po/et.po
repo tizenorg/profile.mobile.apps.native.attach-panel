@@ -25,3 +25,6 @@ msgstr "Kontaktid"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "Minu failid"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "Salvesta\nvideo"
+

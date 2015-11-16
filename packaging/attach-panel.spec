@@ -15,6 +15,7 @@ BuildRequires: edje-tools
 BuildRequires: gettext-tools
 
 BuildRequires: pkgconfig(appcore-efl)
+BuildRequires: pkgconfig(aul)
 BuildRequires: pkgconfig(bundle)
 BuildRequires: pkgconfig(capi-base-common)
 BuildRequires: pkgconfig(capi-system-info)
@@ -28,6 +29,7 @@ BuildRequires: pkgconfig(feedback)
 BuildRequires: pkgconfig(isf)
 #BuildRequires: pkgconfig(security-privilege-checker)
 BuildRequires: pkgconfig(ui-gadget-1)
+BuildRequires: pkgconfig(rua)
 
 %description
 Description: Attach Panel

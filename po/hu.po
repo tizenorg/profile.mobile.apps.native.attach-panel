@@ -25,3 +25,6 @@ msgstr "Névjegyzék"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "Saját fájlok"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "Videó-\nrögzítés"
+

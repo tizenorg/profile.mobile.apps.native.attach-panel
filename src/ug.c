@@ -22,6 +22,7 @@
 #include "attach_panel.h"
 #include "attach_panel_internal.h"
 #include "attach_bundle.h"
+#include "content_list.h"
 #include "gesture.h"
 #include "log.h"
 
@@ -31,6 +32,10 @@ static void __result_cb(ui_gadget_h ui_gadget, app_control_h result, void *priv)
 {
 	content_s *content_info = priv;
 	char *enable = NULL;
+	char **select = NULL;
+
+	int i = 0;
+	int length = 0;
 	int ret = 0;
 
 	ret_if(!content_info);
@@ -55,7 +60,6 @@ static void __result_cb(ui_gadget_h ui_gadget, app_control_h result, void *priv)
 	}
 
 	ret = app_control_get_extra_data(result, "__ATTACH_PANEL_FULL_MODE__", &enable);
-
 	if (APP_CONTROL_ERROR_NONE == ret) {
 		ret_if(!enable);
 
@@ -68,20 +72,73 @@ static void __result_cb(ui_gadget_h ui_gadget, app_control_h result, void *priv)
 		return;
 	}
 
-	_D("This is not result cb for attach-panel");
+	/* This can be called by clicking the 'Cancel' button on the UGs */
+	ret = app_control_get_extra_data(result, "__ATTACH_PANEL_SHOW_PANEL__", &enable);
+	if (APP_CONTROL_ERROR_NONE == ret) {
+		ret_if(!enable);
+
+		_D("attach panel show panel %s", enable);
+		if (!strcmp(enable, MODE_TRUE)) {
+			if (ATTACH_PANEL_STATE_HIDE == _gesture_get_state()) {
+				/* This is same with attach_panel_show() */
+				_content_list_set_resume(content_info->attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+				_content_list_send_message(content_info->attach_panel->content_list, "__ATTACH_PANEL_INITIALIZE__", MODE_ENABLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+				_gesture_show(content_info->attach_panel);
+			}
+		} else {
+			if (ATTACH_PANEL_STATE_HIDE != _gesture_get_state()) {
+				/* This is same with attach_panel_hide() */
+				_content_list_set_pause(content_info->attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+				_gesture_hide(content_info->attach_panel);
+			}
+		}
+		return;
+	}
+
+	/* This can be called on the state of recording video. */
+	ret = app_control_get_extra_data(result, "__ATTACH_PANEL_SHOW_TOOLBAR__", &enable);
+	if (APP_CONTROL_ERROR_NONE == ret) {
+		ret_if(!enable);
+
+		_D("attach panel show toolbar %s", enable);
+		if (!strcmp(enable, MODE_TRUE)) {
+			elm_object_signal_emit(content_info->attach_panel->ui_manager, "toolbar,show", "toolbar");
+		} else {
+			elm_object_signal_emit(content_info->attach_panel->ui_manager, "toolbar,hide", "toolbar");
+		}
+		return;
+	}
+
+	_D("The core of the panel sends the results to the caller");
+
+	/* This is just for protocol log */
+	_D("relay callback is called");
+	ret = app_control_get_extra_data_array(result, "http://tizen.org/appcontrol/data/selected", &select, &length);
+	if (APP_CONTROL_ERROR_NONE == ret && select) {
+		for (i = 0; i < length; i++) {
+			_D("selected is %s[%d]", select[i], i);
+		}
+	}
+
+	ret = app_control_get_extra_data_array(result, "http://tizen.org/appcontrol/data/path", &select, &length);
+	if (APP_CONTROL_ERROR_NONE == ret && select) {
+		for (i = 0; i < length; i++) {
+			_D("path is %s[%d]", select[i], i);
+		}
+	}
 
 	if (content_info->attach_panel->result_cb) {
 		content_info->attach_panel->result_cb(content_info->attach_panel
 				, content_info->innate_content_info->content_category
 				, result
+				, APP_CONTROL_RESULT_SUCCEEDED
 				, content_info->attach_panel->result_data);
 
 		if (ATTACH_PANEL_STATE_FULL == _gesture_get_state()) {
-			/* This is same with attach_panel_hide */
-			//_content_list_set_pause(content_info->attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+			/* This is same with attach_panel_hide() */
+			_content_list_set_pause(content_info->attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 			_gesture_hide(content_info->attach_panel);
 		}
-
 	} else {
 		_D("content_info->attach_panel->result_cb is NULL");
 	}
@@ -172,6 +229,7 @@ void _ug_destroy(Evas_Object *ug)
 
 	ret_if(!ug);
 
+	evas_object_event_callback_del(ug, EVAS_CALLBACK_RESIZE, __resize_cb);
 	ui_gadget = evas_object_data_del(ug, DATA_KEY_UG);
 	ret_if(!ui_gadget);
 

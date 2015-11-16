@@ -25,3 +25,6 @@ msgstr "聯絡人"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "我的檔案"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "錄影"
+

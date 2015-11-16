@@ -25,3 +25,6 @@ msgstr "Əlaqələr"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "Fayllarım"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "Video\nyaz"
+

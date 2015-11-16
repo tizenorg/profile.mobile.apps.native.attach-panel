@@ -31,6 +31,8 @@
 
 #define MODE_ENABLE "enable"
 #define MODE_DISABLE "disable"
+#define MODE_TRUE "true"
+#define MODE_FALSE "false"
 
 #define TABBAR_NAME_MORE "More"
 #define BUF_SIZE 128
@@ -44,6 +46,8 @@
  *   mime : "image/(asterisk)"
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "single"
+ *   2) "http://tizen.org/appcontrol/data/total_count" : any numbers
+ *   3) "http://tizen.org/appcontrol/data/total_size" : any bytes
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -53,6 +57,7 @@
  *   mime : NULL
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "single"
+ *   2) "http://tizen.org/appcontrol/data/total_size" : any bytes
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -62,6 +67,7 @@
  *   mime : NULL
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "single"
+ *   2) "http://tizen.org/appcontrol/data/total_size" : any bytes
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -71,6 +77,8 @@
  *   mime : "video/(asterisk)"
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "multiple"
+ *   2) "http://tizen.org/appcontrol/data/total_count" : any numbers
+ *   3) "http://tizen.org/appcontrol/data/total_size" : any bytes
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -80,6 +88,8 @@
  *   mime : "audio/(asterisk)"
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "multiple"
+ *   2) "http://tizen.org/appcontrol/data/total_count" : any numbers
+ *   3) "http://tizen.org/appcontrol/data/total_size" : any bytes
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -90,9 +100,8 @@
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "multiple"
  *   2) "http://tizen.org/appcontrol/data/mode" : 1
- *   3) "http://tizen.org/appcontrol/data/result_type" : "vcs"
- *   4) "http://tizen.org/appcontrol/data/item_type" : "event"
- *   5) "http://tizen.org/appcontrol/data/max" : 1
+ *   3) "http://tizen.org/appcontrol/data/type" : "vcs"
+ *   4) "http://tizen.org/appcontrol/data/total_count" : any numbers
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -101,9 +110,8 @@
  *   operation : APP_CONTROL_OPERATION_PICK
  *   mime : "application/vnd.tizen.contact"
  *   extra_data : See below
- *   APP_CONTROL_DATA_SELECTION_MODE : "multiple"
- *   1) "http://tizen.org/appcontrol/data/result_type" : "vcard"
- *   2) "http://tizen.org/appcontrol/data/item_type" : "person"
+ *   1) APP_CONTROL_DATA_SELECTION_MODE : "multiple"
+ *   2) "http://tizen.org/appcontrol/data/type" : "vcf"
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
  *
@@ -113,8 +121,22 @@
  *   mime : NULL
  *   extra_data : See below
  *   1) APP_CONTROL_DATA_SELECTION_MODE : "multiple"
+ *   2) "http://tizen.org/appcontrol/data/total_count" : any numbers
+ *   3) "http://tizen.org/appcontrol/data/total_size" : any bytes
  *   return data : See below
  *   1) "http://tizen.org/appcontrol/data/selected"
+ *
+ * - ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER
+ *   appid : NULL
+ *   operation : APP_CONTROL_OPERATION_CREATE_CONTENT
+ *   mime : "video/3gp"
+ *   extra_data : See below
+ *   1) APP_CONTROL_DATA_SELECTION_MODE : "single"
+ *   2) "http://tizen.org/appcontrol/data/total_count" : any numbers
+ *   3) "http://tizen.org/appcontrol/data/total_size" : any bytes
+ *   return data : See below
+ *   1) "http://tizen.org/appcontrol/data/selected"
+
  */
 
 
@@ -159,7 +181,12 @@
  *
  *   key : "__ATTACH_PANEL_SHOW_TOOLBAR__"
  *   value : "true" or "false"
- *   when : set as true when the panel's tabbar it is needed to be shown, and false when it is needed to be hidden.
+ *   when : set as true when the panel's tabbar needs to be shown, and false when it needs to be hidden.
+ *   how : ug_send_result()
+ *
+ *   key : "__ATTACH_PANEL_SHOW_PANEL__"
+ *   value : "true" or "false"
+ *   when : set as true when the panel it needs to be shown, and false when it needs to be hidden.
  *   how : ug_send_result()
  */
 
@@ -200,6 +227,8 @@ struct _attach_panel {
 	attach_panel_state_e attach_panel_land_state;
 	attach_panel_result_cb result_cb;
 	void *result_data;
+	attach_panel_event_cb event_cb;
+	void *event_data;
 
 	Evas_Coord transit_width;
 	Evas_Coord transit_height;
@@ -207,8 +236,9 @@ struct _attach_panel {
 	Eina_Bool is_delete;
 	Eina_Bool rotate;
 	Eina_Bool flick;
-	int current_page;
-	int show_page;
+	int cur_page_no;
+	int cur_event_state;
+	int magic_no;
 };
 typedef struct _attach_panel attach_panel_s;
 
@@ -225,7 +255,7 @@ struct _innate_content {
 
 	/* launching features */
 	const char *operation;
-	const char *result_type;
+	const char *type;
 	const char *item_type;
 	const char *selection_mode;
 	const char *mime;
@@ -242,8 +272,10 @@ struct _content {
 	Elm_Object_Item *tabbar_item;
 	Elm_Object_Item *grid_item;
 	Evas_Object *content;
+	Evas_Object *page;
 	bundle *extra_data;
 	int index;
+	int order;
 };
 typedef struct _content content_s;
 

@@ -25,3 +25,6 @@ msgstr "संपर्क"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "मेरी फाइलें"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "वीडियो\nरिकॉर्ड करे"
+

@@ -58,6 +58,10 @@ void _content_list_send_message(Eina_List *list, const char *key, const char *va
 
 	EINA_LIST_FOREACH(list, l, content_info) {
 		continue_if(!content_info);
+		if (!content_info->content) {
+			_D("ug is not created yet");
+			continue;
+		}
 		innate_content_s *innate_content_info = content_info->innate_content_info;
 		continue_if(!innate_content_info);
 
@@ -66,9 +70,8 @@ void _content_list_send_message(Eina_List *list, const char *key, const char *va
 
 			ui_gadget = evas_object_data_get(content_info->content, DATA_KEY_UG);
 			if (!ui_gadget) {
-				_E("Fail to get the ui gadget");
-				app_control_destroy(app_control);
-				return;
+				_D("Fail to get the ui gadget");
+				continue;
 			}
 			ug_send_message(ui_gadget, app_control);
 		}
@@ -80,7 +83,7 @@ void _content_list_send_message(Eina_List *list, const char *key, const char *va
 
 
 
-void _content_list_send_message_to_content(Eina_List *list, const char *key, const char *value, int show_page)
+void _content_list_send_message_to_content(Eina_List *list, const char *key, const char *value, int cur_page_no)
 {
 	content_s *content_info = NULL;
 	app_control_h app_control = NULL;
@@ -92,7 +95,7 @@ void _content_list_send_message_to_content(Eina_List *list, const char *key, con
 	ret_if(!key);
 	ret_if(!value);
 
-	content_info = eina_list_nth(list, show_page);
+	content_info = eina_list_nth(list, cur_page_no);
 	ret_if(!content_info);
 
 	if (!content_info->innate_content_info->is_ug) {
@@ -119,7 +122,7 @@ void _content_list_send_message_to_content(Eina_List *list, const char *key, con
 
 	ui_gadget = evas_object_data_get(content_info->content, DATA_KEY_UG);
 	if (!ui_gadget) {
-		_E("Fail to get the ui gadget");
+		_D("Fail to get the ui gadget");
 		app_control_destroy(app_control);
 		return;
 	}
@@ -147,10 +150,12 @@ void _content_list_set_pause(Eina_List *list, int is_ug)
 
 			ui_gadget = evas_object_data_get(content_info->content, DATA_KEY_UG);
 			if (!ui_gadget) {
-				_E("Fail to get the ui gadget");
-				return;
+				_D("Fail to get the ui gadget");
+				continue;
 			}
-			//ug_pause_ug(ui_gadget);
+#if 0 /* privilege_checker is not included in the 3.0 */
+			ug_pause_ug(ui_gadget);
+#endif
 		}
 	}
 }
@@ -173,10 +178,12 @@ void _content_list_set_resume(Eina_List *list, int is_ug)
 
 			ui_gadget = evas_object_data_get(content_info->content, DATA_KEY_UG);
 			if (!ui_gadget) {
-				_E("Fail to get the ui gadget");
-				return;
+				_D("Fail to get the ui gadget");
+				continue;
 			}
-			//ug_resume_ug(ui_gadget);
+#if 0 /* privilege_checker is not included in the 3.0 */
+			ug_resume_ug(ui_gadget);
+#endif
 		}
 	}
 }

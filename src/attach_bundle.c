@@ -40,6 +40,8 @@ static void __foreach_bundle_to_add_cb(const char *key, const int type, bundle_k
 	ret_if(!key);
 	ret_if(!app_control);
 
+	_D("key: %s", key);
+
 	switch(type) {
 	case BUNDLE_TYPE_STR:
 		ret = bundle_keyval_get_basic_val(kv, (void *) &basic_val, &size);

@@ -25,3 +25,6 @@ msgstr "Kontakte"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "Eigene Dateien"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "Video\naufnehmen"
+

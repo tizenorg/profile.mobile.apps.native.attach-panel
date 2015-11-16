@@ -31,7 +31,7 @@ extern void _scroller_destroy(Evas_Object *scroller);
 extern void _scroller_append_page(Evas_Object *scroller, Evas_Object *page);
 extern void _scroller_remove_page(Evas_Object *scroller, Evas_Object *page);
 
-extern void _scroller_bring_in_page(Evas_Object *scroller, Evas_Object *page, int *current_page);
+extern void _scroller_bring_in_page(Evas_Object *scroller, Evas_Object *page, int *cur_page_no);
 
 extern int _scroller_is_scrolling(Evas_Object *scroller);
 extern void _scroller_resize(Evas_Object *scroller, int width, int height);
