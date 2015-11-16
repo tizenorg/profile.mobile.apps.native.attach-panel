@@ -52,6 +52,13 @@ attach_panel_state_e _gesture_get_state(void)
 
 
 
+void _gesture_set_state(attach_panel_state_e state)
+{
+	gesture_info_s.attach_panel_state = state;
+}
+
+
+
 static Elm_Transit_Effect *__custom_effect_new(Evas_Coord from_h, Evas_Coord to_h)
 {
 	custom_effect_s *custom_effect = calloc(1, sizeof(custom_effect_s));
@@ -102,15 +109,22 @@ static void __custom_effect_free(Elm_Transit_Effect *effect, Elm_Transit *transi
 static void __attach_panel_transit_del_cb(void *data, Elm_Transit *transit)
 {
 	attach_panel_h attach_panel = data;
+	_D("%s : transit is ended", __func__);
 
 	gesture_info_s.transit = NULL;
 	if (gesture_info_s.attach_panel_state == ATTACH_PANEL_STATE_HIDE) {
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,hide,finished", "");
+		if (attach_panel->event_cb) {
+			attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_HIDE_FINISH, NULL, attach_panel->event_data);
+		}
 		if (attach_panel->is_delete) {
 			_attach_panel_del(attach_panel);
 		}
 	} else {
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,finished", "");
+		if (attach_panel->event_cb) {
+			attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_SHOW_FINISH, NULL, attach_panel->event_data);
+		}
 	}
 }
 
@@ -122,6 +136,21 @@ static void __attach_panel_transit_set(attach_panel_h attach_panel, Evas_Coord f
 
 	if (gesture_info_s.transit) {
 		_E("Transit is already activating");
+		if (attach_panel->cur_event_state == ATTACH_PANEL_EVENT_HIDE_START) {
+			if (gesture_info_s.attach_panel_state != ATTACH_PANEL_STATE_HIDE) {
+				if (attach_panel->event_cb) {
+					attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_HIDE_FINISH, NULL, attach_panel->event_data);
+					attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_SHOW_START, NULL, attach_panel->event_data);
+				}
+			}
+		} else {
+			if (gesture_info_s.attach_panel_state == ATTACH_PANEL_STATE_HIDE) {
+				if (attach_panel->event_cb) {
+					attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_SHOW_FINISH, NULL, attach_panel->event_data);
+					attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_HIDE_START, NULL, attach_panel->event_data);
+				}
+			}
+		}
 		return;
 	}
 
@@ -130,8 +159,16 @@ static void __attach_panel_transit_set(attach_panel_h attach_panel, Evas_Coord f
 
 	if (gesture_info_s.attach_panel_state == ATTACH_PANEL_STATE_HIDE) {
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,hide,started", "");
+		attach_panel->cur_event_state = ATTACH_PANEL_EVENT_HIDE_START;
+		if (attach_panel->event_cb) {
+			attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_HIDE_START, NULL, attach_panel->event_data);
+		}
 	} else {
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,started", "");
+		attach_panel->cur_event_state = ATTACH_PANEL_EVENT_SHOW_START;
+		if (attach_panel->event_cb) {
+			attach_panel->event_cb(attach_panel, ATTACH_PANEL_EVENT_SHOW_START, NULL, attach_panel->event_data);
+		}
 	}
 
 	gesture_info_s.transit = elm_transit_add();
@@ -154,11 +191,12 @@ static void __attach_panel_transit_set(attach_panel_h attach_panel, Evas_Coord f
 void _gesture_show(attach_panel_h attach_panel)
 {
 	gesture_info_s.attach_panel_state = ATTACH_PANEL_STATE_HALF;
-	_D("");
+	_D("gesture show start");
 
 	if (attach_panel->rotate) {
 		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_MULTIPLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 		attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_FULL;
+		gesture_info_s.attach_panel_state = ATTACH_PANEL_STATE_FULL;
 		__attach_panel_transit_set(attach_panel, 0, attach_panel->transit_height, TRANSIT_DURATION);
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,full", "");
 
@@ -167,6 +205,7 @@ void _gesture_show(attach_panel_h attach_panel)
 		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_SINGLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 		elm_scroller_movement_block_set(attach_panel->grid, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
 		attach_panel->attach_panel_port_state = ATTACH_PANEL_STATE_HALF;
+		gesture_info_s.attach_panel_state = ATTACH_PANEL_STATE_HALF;
 		__attach_panel_transit_set(attach_panel, 0, attach_panel->transit_height, TRANSIT_DURATION);
 	}
 }
@@ -175,7 +214,7 @@ void _gesture_show(attach_panel_h attach_panel)
 
 void _gesture_hide(attach_panel_h attach_panel)
 {
-	_D("");
+	_D("gestrue hide start");
 	if (attach_panel->rotate) {
 		attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_HIDE;
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,half", "");

@@ -25,3 +25,6 @@ msgstr "കോൺടാക്ടുകള്‍"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "എന്‍റെ ഫയലുകൾ"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "വീഡിയോ\nറെക്കോർഡ് ചെയ്യുക"
+

@@ -21,7 +21,9 @@
 #include <isf_control.h>
 #include <system_info.h>
 #include <tizen.h>
-//#include <privilege_checker.h>
+#if 0 /* privilege_checker is not included in the 3.0 */
+#include <privilege_checker.h>
+#endif
 #include <ui-gadget.h>
 
 #include "attach_panel.h"
@@ -30,9 +32,12 @@
 #include "conf.h"
 #include "content_list.h"
 #include "gesture.h"
+#include "grid.h"
 #include "ui_manager.h"
+#include "list.h"
 #include "log.h"
 #include "scroller.h"
+#include "toolbar.h"
 
 static const char *const ATTACH_PANEL_DOMAIN = "attach-panel";
 static const char *const PLATFORM_FEATURE_CAMERA = "tizen.org/feature/camera";
@@ -40,7 +45,7 @@ static const char *const PLATFORM_FEATURE_MICROPHONE = "tizen.org/feature/microp
 
 
 
-innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_MYFILES] = {
+innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER] = {
 	{
 		.appid = "attach-panel-gallery",
 		.name = "IDS_COM_TAB4_IMAGES_ABB2",
@@ -70,7 +75,7 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_MYFILES] = {
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_UG,
 	},
 	{
-		.appid = NULL,
+		.appid = "videos",
 		.name = "IDS_COM_BUTTON2_VIDEOS",
 		.operation = APP_CONTROL_OPERATION_PICK,
 		.icon = "/usr/share/icons/video.png",
@@ -81,7 +86,7 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_MYFILES] = {
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
 	},
 	{
-		.appid = "NULL",
+		.appid = "audio",
 		.name = "IDS_COM_BUTTON2_AUDIO_FILES",
 		.operation = APP_CONTROL_OPERATION_PICK,
 		.icon = "/usr/share/icons/music.png",
@@ -92,14 +97,13 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_MYFILES] = {
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
 	},
 	{
-		.appid = "NULL",
+		.appid = "calendar",
 		.name = "IDS_EMAIL_BUTTON2_CALENDAR",
 		.operation = APP_CONTROL_OPERATION_PICK,
 		.icon = "/usr/share/icons/calendar.png",
 		.tabbar_name = "IDS_COM_TAB4_MORE_ABB",
 		.mode = 1,
-		.result_type = "vcs",
-		.item_type = "event",
+		.type = "vcs",
 		.selection_mode = "multiple",
 		.mime = "application/vnd.tizen.calendar",
 		.max = 1,
@@ -107,12 +111,12 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_MYFILES] = {
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
 	},
 	{
-		.appid = "NULL",
+		.appid = "contacts",
 		.name = "IDS_COM_BUTTON2_CONTACTS",
 		.operation = APP_CONTROL_OPERATION_PICK,
 		.icon = "/usr/share/icons/contact.png",
 		.tabbar_name = "IDS_COM_TAB4_MORE_ABB",
-		.result_type = "vcard",
+		.type = "vcf",
 		.item_type = "person",
 		.selection_mode = "multiple",
 		.mime = "application/vnd.tizen.contact",
@@ -120,13 +124,24 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_MYFILES] = {
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
 	},
 	{
-		.appid = "NULL",
+		.appid = "myfiles",
 		.name = "IDS_COM_BUTTON_MY_FILES_ABB",
 		.operation = APP_CONTROL_OPERATION_PICK,
 		.tabbar_name = "IDS_COM_TAB4_MORE_ABB",
 		.icon = "/usr/share/icons/my_files.png",
 		.selection_mode = "multiple",
 		.content_category = ATTACH_PANEL_CONTENT_CATEGORY_MYFILES,
+		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
+	},
+	{
+		.appid = "record_video",
+		.name = "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB",
+		.operation = APP_CONTROL_OPERATION_CREATE_CONTENT,
+		.icon = "/usr/share/icons/default.png",
+		.tabbar_name = "IDS_COM_TAB4_MORE_ABB",
+		.selection_mode = "single",
+		.mime = "video/3gp",
+		.content_category = ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER,
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
 	},
 };
@@ -194,10 +209,12 @@ static void __rotate_cb(void *data, Evas_Object *obj, void *event)
 			attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_HIDE;
 		} else if (ATTACH_PANEL_STATE_HALF == attach_panel->attach_panel_port_state) {
 			attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_FULL;
+			_gesture_set_state(ATTACH_PANEL_STATE_FULL);
 			_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_MULTIPLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 			elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,full", "");
 		} else {
 			attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_FULL;
+			_gesture_set_state(ATTACH_PANEL_STATE_FULL);
 		}
 		break;
 	case 0:
@@ -214,10 +231,12 @@ static void __rotate_cb(void *data, Evas_Object *obj, void *event)
 			attach_panel->attach_panel_port_state = ATTACH_PANEL_STATE_HIDE;
 		} else {
 			if (ATTACH_PANEL_STATE_HALF == attach_panel->attach_panel_port_state) {
+				_gesture_set_state(ATTACH_PANEL_STATE_HALF);
 				_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_SINGLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 				elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,half", "");
 			} else {
 				attach_panel->attach_panel_port_state = ATTACH_PANEL_STATE_FULL;
+				_gesture_set_state(ATTACH_PANEL_STATE_FULL);
 			}
 		}
 		break;
@@ -227,6 +246,7 @@ static void __rotate_cb(void *data, Evas_Object *obj, void *event)
 	}
 
 	_scroller_resize(attach_panel->scroller, w, 0);
+	elm_scroller_page_show(attach_panel->scroller, attach_panel->cur_page_no, 0);
 }
 
 
@@ -286,13 +306,14 @@ EXPORT_API int attach_panel_create(Evas_Object *conformant, attach_panel_h *atta
 	panel->is_delete = EINA_FALSE;
 	panel->rotate = EINA_FALSE;
 	panel->flick = EINA_TRUE;
-	panel->current_page = 0;
-	panel->show_page = 0;
+	panel->cur_page_no = 0;
+	panel->magic_no = 0x1024;
 
 	panel->gesture = _gesture_create(panel);
 	goto_if(!panel->gesture, ERROR);
 
 	evas_object_smart_callback_add(panel->win, "wm,rotation,changed", __rotate_cb, panel);
+	elm_scroller_movement_block_set(panel->scroller, ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL);
 	__rotate_cb(panel, panel->win, NULL);
 	*attach_panel = panel;
 
@@ -321,6 +342,14 @@ extern void _attach_panel_del(attach_panel_h attach_panel)
 	Eina_List *l = NULL;
 
 	ret_if(!attach_panel);
+	_D("%s : attach panel is destroyed", __func__);
+
+	if (0x1024 != attach_panel->magic_no) {
+		_D("attach panel is already destroyed");
+		return;
+	}
+
+	attach_panel->magic_no = 0;
 
 	_gesture_destroy(attach_panel);
 
@@ -346,16 +375,18 @@ extern void _attach_panel_del(attach_panel_h attach_panel)
 EXPORT_API int attach_panel_destroy(attach_panel_h attach_panel)
 {
 	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+	_D("%s : attach panel will be destroyed", __func__);
 
 	if (EINA_TRUE == attach_panel->is_delete) {
 		_E("Attach panel is already removed");
 		return ATTACH_PANEL_ERROR_ALREADY_DESTROYED;
 	}
 
+	attach_panel->is_delete = EINA_TRUE;
 	if (ATTACH_PANEL_STATE_HIDE == _gesture_get_state()) {
 		_attach_panel_del(attach_panel);
 	} else {
-		attach_panel->is_delete = EINA_TRUE;
+		attach_panel_hide(attach_panel);
 	}
 
 	return ATTACH_PANEL_ERROR_NONE;
@@ -376,9 +407,11 @@ static void __iter_cb(const char *key, const int type, bundle_keyval_t *kv, void
 
 
 
-//static const char *const PRIVILEGE_CAMERA = "http://tizen.org/privilege/camera";
-//static const char *const PRIVILEGE_RECORDER = "http://tizen.org/privilege/recorder";
-//static const char *const PRIVILEGE_APPMANAGER_LAUNCH = "http://tizen.org/privilege/appmanager.launch";
+#if 0 /* privilege_checker is not included in the 3.0 */
+static const char *const PRIVILEGE_CAMERA = "http://tizen.org/privilege/camera";
+static const char *const PRIVILEGE_RECORDER = "http://tizen.org/privilege/recorder";
+static const char *const PRIVILEGE_APPMANAGER_LAUNCH = "http://tizen.org/privilege/appmanager.launch";
+#endif
 EXPORT_API int attach_panel_add_content_category(attach_panel_h attach_panel, attach_panel_content_category_e content_category, bundle *extra_data)
 {
 	content_s *content_info = NULL;
@@ -390,7 +423,7 @@ EXPORT_API int attach_panel_add_content_category(attach_panel_h attach_panel, at
 	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
 	retv_if(!attach_panel->ui_manager, ATTACH_PANEL_ERROR_NOT_INITIALIZED);
 	retv_if(content_category < ATTACH_PANEL_CONTENT_CATEGORY_IMAGE, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
-	retv_if(content_category > ATTACH_PANEL_CONTENT_CATEGORY_MYFILES, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+	retv_if(content_category > ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
 
 	if (EINA_TRUE == attach_panel->is_delete) {
 		_E("Attach panel is already removed");
@@ -402,33 +435,34 @@ EXPORT_API int attach_panel_add_content_category(attach_panel_h attach_panel, at
 		ret = system_info_get_platform_bool(PLATFORM_FEATURE_CAMERA, &value);
 		break_if(SYSTEM_INFO_ERROR_NONE != ret);
 		retv_if(false == value, ATTACH_PANEL_ERROR_UNSUPPORTED_CONTENT_CATEGORY);
-/*
+
+#if 0 /* privilege_checker is not included in the 3.0 */
 		ret = privilege_checker_check_privilege(PRIVILEGE_CAMERA);
 		retv_if(PRIVILEGE_CHECKER_ERR_UNDECLARED_PRIVILEGE == ret, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
 		break_if(PRIVILEGE_CHECKER_ERR_NONE != ret);
-*/
+#endif
 		break;
 	case ATTACH_PANEL_CONTENT_CATEGORY_VOICE:
 		ret = system_info_get_platform_bool(PLATFORM_FEATURE_MICROPHONE, &value);
 		break_if(SYSTEM_INFO_ERROR_NONE != ret);
 		retv_if(false == value, ATTACH_PANEL_ERROR_UNSUPPORTED_CONTENT_CATEGORY);
 
-/*
+#if 0 /* privilege_checker is not included in the 3.0 */
 		ret = privilege_checker_check_privilege(PRIVILEGE_RECORDER);
 		retv_if(PRIVILEGE_CHECKER_ERR_UNDECLARED_PRIVILEGE == ret, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
 		break_if(PRIVILEGE_CHECKER_ERR_NONE != ret);
-*/
+#endif
 		break;
 	case ATTACH_PANEL_CONTENT_CATEGORY_VIDEO:
 	case ATTACH_PANEL_CONTENT_CATEGORY_AUDIO:
 	case ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR:
 	case ATTACH_PANEL_CONTENT_CATEGORY_CONTACT:
 	case ATTACH_PANEL_CONTENT_CATEGORY_MYFILES:
-/*
+#if 0 /* privilege_checker is not included in the 3.0 */
 		ret = privilege_checker_check_privilege(PRIVILEGE_APPMANAGER_LAUNCH);
 		retv_if(PRIVILEGE_CHECKER_ERR_UNDECLARED_PRIVILEGE == ret, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
 		break_if(PRIVILEGE_CHECKER_ERR_NONE != ret);
-*/
+#endif
 		break;
 	default:
 		break;
@@ -470,7 +504,7 @@ EXPORT_API int attach_panel_remove_content_category(attach_panel_h attach_panel,
 	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
 	retv_if(!attach_panel->ui_manager, ATTACH_PANEL_ERROR_NOT_INITIALIZED);
 	retv_if(content_category < ATTACH_PANEL_CONTENT_CATEGORY_IMAGE, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
-	retv_if(content_category > ATTACH_PANEL_CONTENT_CATEGORY_MYFILES, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+	retv_if(content_category > ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
 
 	if (EINA_TRUE == attach_panel->is_delete) {
 		_E("Attach panel is already removed");
@@ -505,7 +539,8 @@ EXPORT_API int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_p
 	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
 	retv_if(!attach_panel->ui_manager, ATTACH_PANEL_ERROR_NOT_INITIALIZED);
 	retv_if(content_category < ATTACH_PANEL_CONTENT_CATEGORY_IMAGE, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
-	retv_if(content_category > ATTACH_PANEL_CONTENT_CATEGORY_MYFILES, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+	retv_if(content_category > ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+	retv_if(!extra_data, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
 
 	bundle_foreach(extra_data, (void *) __iter_cb, &bundle_is_op);
 
@@ -534,6 +569,16 @@ EXPORT_API int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_p
 	}
 
 	if (innate_content_info[content_category-1].is_ug) {
+		if (!content_info->content) {
+			_D("Create ug because ug is not created yet");
+			content_info->content = _ui_manager_create_content(content_info->page, content_info, attach_panel);
+			retv_if(!content_info->content, ATTACH_PANEL_ERROR_OUT_OF_MEMORY);
+			if (ATTACH_PANEL_STATE_FULL == _gesture_get_state()) {
+				_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_MULTIPLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+			} else {
+				_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_SINGLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+			}
+		}
 
 		ret = app_control_create(&app_control);
 		retv_if(APP_CONTROL_ERROR_NONE != ret, ATTACH_PANEL_ERROR_OUT_OF_MEMORY);
@@ -593,8 +638,45 @@ EXPORT_API int attach_panel_unset_result_cb(attach_panel_h attach_panel)
 
 
 
+EXPORT_API int attach_panel_set_event_cb(attach_panel_h attach_panel, attach_panel_event_cb event_cb, void *user_data)
+{
+	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+	retv_if(!event_cb, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+
+	if (EINA_TRUE == attach_panel->is_delete) {
+		_E("Attach panel is already removed");
+		return ATTACH_PANEL_ERROR_ALREADY_DESTROYED;
+	}
+
+	attach_panel->event_cb = event_cb;
+	attach_panel->event_data = user_data;
+
+	return ATTACH_PANEL_ERROR_NONE;
+}
+
+
+
+EXPORT_API int attach_panel_unset_event_cb(attach_panel_h attach_panel)
+{
+	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
+
+	if (EINA_TRUE == attach_panel->is_delete) {
+		_E("Attach panel is already removed");
+		return ATTACH_PANEL_ERROR_ALREADY_DESTROYED;
+	}
+
+	attach_panel->event_cb = NULL;
+	attach_panel->event_data = NULL;
+
+	return ATTACH_PANEL_ERROR_NONE;
+}
+
+
+
 EXPORT_API int attach_panel_show(attach_panel_h attach_panel)
 {
+	Elm_Object_Item *first_it;
+	content_s *content_info = NULL;
 	int height = 0;
 
 	retv_if(!attach_panel, ATTACH_PANEL_ERROR_INVALID_PARAMETER);
@@ -617,11 +699,31 @@ EXPORT_API int attach_panel_show(attach_panel_h attach_panel)
 		attach_panel->transit_height = height;
 	}
 
-	//_content_list_set_resume(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	content_info = eina_list_nth(attach_panel->content_list, attach_panel->cur_page_no);
+	retv_if(!content_info, ATTACH_PANEL_ERROR_OUT_OF_MEMORY);
+
+	_toolbar_bring_in(attach_panel->toolbar, content_info->tabbar_item);
+
+	if (content_info->content) {
+		elm_scroller_page_show(attach_panel->scroller, attach_panel->cur_page_no, 0);
+	} else {
+		content_info->content = _ui_manager_create_content(content_info->page, content_info, attach_panel);
+		retv_if(!content_info->content, ATTACH_PANEL_ERROR_OUT_OF_MEMORY);
+	}
+
+	_content_list_set_resume(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 	_content_list_send_message(attach_panel->content_list, "__ATTACH_PANEL_INITIALIZE__", MODE_ENABLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 	evas_object_show(attach_panel->ui_manager);
+
 	_gesture_show(attach_panel);
-	elm_scroller_page_show(attach_panel->scroller, attach_panel->current_page, 0);
+
+	attach_panel->content_list = _list_sort_by_rua(attach_panel->content_list);
+	_grid_refresh(attach_panel->grid);
+
+	first_it = elm_gengrid_first_item_get(attach_panel->grid);
+	if (first_it) {
+		elm_gengrid_item_show(first_it, ELM_GENGRID_ITEM_SCROLLTO_TOP);
+	}
 
 	return ATTACH_PANEL_ERROR_NONE;
 }
@@ -638,7 +740,7 @@ EXPORT_API int attach_panel_hide(attach_panel_h attach_panel)
 		return ATTACH_PANEL_ERROR_ALREADY_DESTROYED;
 	}
 
-	//_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
+	_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 	_gesture_hide(attach_panel);
 
 	return ATTACH_PANEL_ERROR_NONE;

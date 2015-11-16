@@ -82,6 +82,51 @@ static void _rotate_cb(void *data, Evas_Object *obj, void *event)
 
 
 
+static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *user_data)
+{
+	char **select = NULL;
+	int i = 0;
+	int length = 0;
+	int ret = APP_CONTROL_ERROR_NONE;
+
+	ret_if(!result);
+
+	ret = app_control_get_extra_data_array(result, "http://tizen.org/appcontrol/data/selected", &select, &length);
+	if (APP_CONTROL_ERROR_NONE == ret) {
+		for (i = 0; i < length; i++) {
+			_D("file_path is %s[%d]", select[i], i);
+			elm_object_part_text_set(sample_info.layout, "result", select[i]);
+			free(select[i]);
+		}
+	}
+
+	free(select);
+}
+
+
+
+static void _event_cb(attach_panel_h attach_panel, attach_panel_event_e event, void *event_info, void *data)
+{
+	ret_if(!attach_panel);
+
+	switch (event) {
+	case ATTACH_PANEL_EVENT_SHOW_START:
+		_D("attach panel : show start");
+		break;
+	case ATTACH_PANEL_EVENT_SHOW_FINISH:
+		_D("attach panel : show finish");
+		break;
+	case ATTACH_PANEL_EVENT_HIDE_START:
+		_D("attach panel : hide start");
+		break;
+	case ATTACH_PANEL_EVENT_HIDE_FINISH:
+		_D("attach panel : hide finish");
+		break;
+	}
+}
+
+
+
 static void _win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 {
 	bool visible = false;
@@ -103,6 +148,10 @@ static void _win_back_key_cb(void *data, Evas_Object *obj, void *event_info)
 			attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR);
 			attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_CONTACT);
 			attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_MYFILES);
+			attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER);
+
+			attach_panel_unset_result_cb(sample_info.attach_panel);
+			attach_panel_unset_event_cb(sample_info.attach_panel);
 
 			attach_panel_destroy(sample_info.attach_panel);
 			sample_info.attach_panel = NULL;
@@ -127,34 +176,15 @@ static void _attach_panel_cancel_cb(void *data, Evas_Object *obj, const char *em
 		attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR);
 		attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_CONTACT);
 		attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_MYFILES);
+		attach_panel_remove_content_category(sample_info.attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER);
 
 		attach_panel_hide(sample_info.attach_panel);
+		attach_panel_unset_result_cb(sample_info.attach_panel);
+		attach_panel_unset_event_cb(sample_info.attach_panel);
+
 		attach_panel_destroy(sample_info.attach_panel);
 		sample_info.attach_panel = NULL;
 	}
-}
-
-
-
-static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *user_data)
-{
-	char **select = NULL;
-	int i = 0;
-	int length = 0;
-	int ret = APP_CONTROL_ERROR_NONE;
-
-	ret_if(!result);
-
-	ret = app_control_get_extra_data_array(result, "http://tizen.org/appcontrol/data/selected", &select, &length);
-	if (APP_CONTROL_ERROR_NONE == ret) {
-		for (i = 0; i < length; i++) {
-			_D("file_path is %s[%d]", select[i], i);
-			elm_object_part_text_set(sample_info.layout, "result", select[i]);
-			free(select[i]);
-		}
-	}
-
-	free(select);
 }
 
 
@@ -189,7 +219,9 @@ static void _attach_panel_create_cb(void *data, Evas_Object *obj, void *event_in
 	attach_panel_add_content_category(attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR, NULL);
 	attach_panel_add_content_category(attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_CONTACT, NULL);
 	attach_panel_add_content_category(attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_MYFILES, NULL);
+	attach_panel_add_content_category(attach_panel, ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER, NULL);
 	attach_panel_set_result_cb(attach_panel, _result_cb, NULL);
+	attach_panel_set_event_cb(attach_panel, _event_cb, NULL);
 
 	attach_panel_show(attach_panel);
 

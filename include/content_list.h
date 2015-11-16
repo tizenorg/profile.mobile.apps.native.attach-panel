@@ -22,7 +22,7 @@
 
 
 void _content_list_send_message(Eina_List *list, const char *key, const char *value, int is_ug);
-void _content_list_send_message_to_content(Eina_List *list, const char *key, const char *value, int show_page);
+void _content_list_send_message_to_content(Eina_List *list, const char *key, const char *value, int cur_page_no);
 void _content_list_set_pause(Eina_List *list, int is_ug);
 void _content_list_set_resume(Eina_List *list, int is_ug);
 

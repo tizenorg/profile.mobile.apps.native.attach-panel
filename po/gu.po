@@ -25,3 +25,6 @@ msgstr "સંપર્કો"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "મારી ફાઇલ્સ"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "વિડિયો\nરેકોર્ડ કરો"
+

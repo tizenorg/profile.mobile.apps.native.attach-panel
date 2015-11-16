@@ -21,6 +21,7 @@
 
 extern Evas_Object *_grid_create(Evas_Object *page, attach_panel_h attach_panel);
 extern void _grid_destroy(Evas_Object *grid);
+extern void _grid_refresh(Evas_Object *grid);
 
 extern Elm_Object_Item *_grid_append_item(Evas_Object *grid, content_s *content_info);
 extern void _grid_remove_item(Evas_Object *grid, content_s *content_info);

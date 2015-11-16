@@ -22,6 +22,7 @@
 #define GRID_ROW_COUNT 4
 #define GRID_ITEM_HEIGHT_REL 1.15
 #define GRID_ICON_SIZE_REL 0.5
+#define ORDER_MAX 99
 
 
 #endif

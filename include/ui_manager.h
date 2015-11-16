@@ -24,5 +24,7 @@ extern void _ui_manager_remove_content_category(Evas_Object *ui_manager, content
 
 extern Evas_Object *_ui_manager_create(attach_panel_h attach_panel);
 extern void _ui_manager_destroy(Evas_Object *ui_manager);
+extern Evas_Object *_ui_manager_create_content(Evas_Object *page, content_s *content_info, attach_panel_h attach_panel);
+extern void _ui_manager_destroy_content(content_s *content_info, attach_panel_h attach_panel);
 
 #endif /* __TIZEN_ATTACH_PANEL_UI_MANAGER_H__ */

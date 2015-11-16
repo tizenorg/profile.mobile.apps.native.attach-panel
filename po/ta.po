@@ -25,3 +25,6 @@ msgstr "தொடர்புகள்"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "எ. கோப்புகள்"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "நிகழ்படத்தை\nபதிவுசெய்."
+

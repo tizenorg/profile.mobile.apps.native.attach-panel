@@ -35,10 +35,9 @@ collections {
 				}
 			}
 			part {
-				name: "toolbar";
-				type: SWALLOW;
+				name: "toolbar,clip";
+				type: RECT;
 				scale: 1;
-				mouse_events: 1;
 				description {
 					state: "default" 0.0;
 					rel1 { relative: 0.0 0.0; to: "bg"; }
@@ -46,6 +45,26 @@ collections {
 					min: 0 TOOLBAR_HEIGHT;
 					fixed: 0 1;
 					align: 0.5 0.0;
+					visible: 1;
+				}
+				description {
+					state: "hide" 0.0;
+					inherit: "default" 0.0;
+					min: 0 0;
+				}
+			}
+			part {
+				name: "toolbar";
+				type: SWALLOW;
+				clip_to: "toolbar,clip";
+				scale: 1;
+				mouse_events: 1;
+				description {
+					state: "default" 0.0;
+					rel1 { relative: 0.0 0.0; to: "toolbar,clip"; }
+					rel2 { relative: 1.0 1.0; to: "toolbar,clip"; }
+					fixed: 0 1;
+					align: 0.5 0.5;
 					visible: 1;
 				}
 			}
@@ -56,12 +75,30 @@ collections {
 				mouse_events: 1;
 				description {
 					state: "default" 0.0;
-					rel1 { relative: 0.0 1.0; to: "toolbar"; }
+					rel1 { relative: 0.0 1.0; to: "toolbar,clip"; }
 					rel2 { relative: 1.0 1.0; to: "bg"; }
 					align: 0.5 1.0;
 					fixed: 1 1;
 					visible: 1;
 				}
+			}
+		}
+		programs {
+			program {
+				name: "toolbar,show";
+				signal: "toolbar,show";
+				source: "toolbar";
+				action: STATE_SET "default" 0.0;
+				target: "toolbar,clip";
+				transition: LINEAR 0.2;
+			}
+			program {
+				name: "toolbar,hide";
+				signal: "toolbar,hide";
+				source: "toolbar";
+				action: STATE_SET "hide" 0.0;
+				target: "toolbar,clip";
+				transition: LINEAR 0.2;
 			}
 		}
 	} // group

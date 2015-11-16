@@ -33,11 +33,13 @@ SET(SRCS
 	src/toolbar.c
 	src/ug.c
 	src/ui_manager.c
+	src/list.c
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 INCLUDE(FindPkgConfig)
 pkg_check_modules(pkgs REQUIRED
+	aul
 	capi-base-common
 	capi-system-info
 	bundle
@@ -47,9 +49,10 @@ pkg_check_modules(pkgs REQUIRED
 	evas
 	feedback
 	isf
-#	security-privilege-checker
 	ui-gadget-1
+	rua
 )
+#	security-privilege-checker
 
 FOREACH(flag ${pkgs_CFLAGS})
 	SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")

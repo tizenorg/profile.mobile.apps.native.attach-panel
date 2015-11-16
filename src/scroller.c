@@ -82,10 +82,10 @@ static void __anim_stop_cb(void *data, Evas_Object *scroller, void *event_info)
 		return;
 	}
 
-	if (attach_panel->show_page != index) {
-		_content_list_send_message_to_content(attach_panel->content_list, "__ATTACH_PANEL_SHOW_CONTENT_CATEGORY__", "false", attach_panel->show_page);
+	if (attach_panel->cur_page_no != index) {
+		_content_list_send_message_to_content(attach_panel->content_list, "__ATTACH_PANEL_SHOW_CONTENT_CATEGORY__", "false", attach_panel->cur_page_no);
 		_content_list_send_message_to_content(attach_panel->content_list, "__ATTACH_PANEL_SHOW_CONTENT_CATEGORY__", "true", index);
-		attach_panel->show_page = index;
+		attach_panel->cur_page_no = index;
 		_D("change the show page : %d", index);
 	}
 }
@@ -143,7 +143,7 @@ static void __scroll_cb(void *data, Evas_Object *scroller, void *event_info)
 	EINA_LIST_FOREACH(attach_panel->content_list, l, info) {
 		if (index == i) {
 			tabbar_item = info->tabbar_item;
-			attach_panel->current_page = i;
+			attach_panel->cur_page_no = i;
 			break;
 		}
 		i++;
@@ -179,7 +179,7 @@ static void __resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
 	if (w == screen_w || w == screen_h) {
 		_D("screen size(%d, %d)", screen_w, screen_h);
-		elm_scroller_page_show(scroller, attach_panel->current_page, 0);
+		elm_scroller_page_show(scroller, attach_panel->cur_page_no, 0);
 	}
 }
 
@@ -224,10 +224,9 @@ Evas_Object *_scroller_create(Evas_Object *ui_manager, attach_panel_h attach_pan
 	elm_box_align_set(box, 0.5, 0.0);
 	evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(box);
-	evas_object_event_callback_add(box, EVAS_CALLBACK_RESIZE, __resize_cb, "box");
 
 	elm_object_content_set(scroller, box);
-	attach_panel->current_page = 0;
+	attach_panel->cur_page_no = 0;
 
 	return scroller;
 
@@ -250,7 +249,6 @@ void _scroller_destroy(Evas_Object *scroller)
 	if (box) {
 		evas_object_del(box);
 	}
-	evas_object_event_callback_del(box, EVAS_CALLBACK_RESIZE, __resize_cb);
 
 	evas_object_del(scroller);
 }
@@ -298,7 +296,7 @@ void _scroller_remove_page(Evas_Object *scroller, Evas_Object *page)
 
 
 
-void _scroller_bring_in_page(Evas_Object *scroller, Evas_Object *page, int *current_page)
+void _scroller_bring_in_page(Evas_Object *scroller, Evas_Object *page, int *cur_page_no)
 {
 	Evas_Object *box = NULL;
 	Evas_Object *tmp = NULL;
@@ -327,7 +325,7 @@ void _scroller_bring_in_page(Evas_Object *scroller, Evas_Object *page, int *curr
 		index = 0;
 	}
 
-	*current_page = index;
+	*cur_page_no = index;
 
 	elm_scroller_page_bring_in(scroller, index, 0);
 }

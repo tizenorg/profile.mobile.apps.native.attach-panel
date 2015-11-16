@@ -49,14 +49,28 @@ extern "C" {
  */
 typedef enum attach_panel_content_category {
 	ATTACH_PANEL_CONTENT_CATEGORY_IMAGE = 1, /**< Attaching images from the gallery */
-	ATTACH_PANEL_CONTENT_CATEGORY_CAMERA, /**< Taking pictures or videos with the camera to attach */
-	ATTACH_PANEL_CONTENT_CATEGORY_VOICE, /**< Taking voices with the voice-recoder to attach */
+	ATTACH_PANEL_CONTENT_CATEGORY_CAMERA, /**< Taking pictures to attach */
+	ATTACH_PANEL_CONTENT_CATEGORY_VOICE, /**< Taking a voice clip to attach */
 	ATTACH_PANEL_CONTENT_CATEGORY_VIDEO, /**< Attaching video from the gallery */
 	ATTACH_PANEL_CONTENT_CATEGORY_AUDIO, /**< Attaching audio from my files */
 	ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR, /**< Attaching calendar data from the calendar */
 	ATTACH_PANEL_CONTENT_CATEGORY_CONTACT, /**< Attaching contact data from the contacts */
 	ATTACH_PANEL_CONTENT_CATEGORY_MYFILES, /**< Attaching files data from my files */
+	ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER, /**< Taking a video clip to attach */
 } attach_panel_content_category_e;
+
+/**
+ * @brief Enumeration for events
+ * @since_tizen 2.4
+ * @see attach_panel_set_event_cb()
+ * @see attach_panel_unset_event_cb()
+ */
+typedef enum attach_panel_event {
+	ATTACH_PANEL_EVENT_SHOW_START = 1, /**< Attach panel starts the effect to show */
+	ATTACH_PANEL_EVENT_SHOW_FINISH, /**< Attach panel finishes the effect to show */
+	ATTACH_PANEL_EVENT_HIDE_START, /**< Attach panel starts the effect to hide the panel */
+	ATTACH_PANEL_EVENT_HIDE_FINISH, /**< Attach panel finishes the effect to hide the panel */
+} attach_panel_event_e;
 
 /**
  * @brief Attach panel handle.
@@ -73,6 +87,7 @@ typedef struct _attach_panel *attach_panel_h;
  * @param[in] result app_control handler.\n
  *                   The caller app has to use app_control_get_extra_data_array() to get received data.\n
  *                   http://tizen.org/appcontrol/data/selected\n
+ * @param[in] result_code result of app_control
  * @param[in] user_data user data
  * @pre The callback must be registered using attach_panel_set_result_cb()\n
  * attach_panel_add_content_category() and attach_panel_show() must be called to invoke this callback.
@@ -81,7 +96,23 @@ typedef struct _attach_panel *attach_panel_h;
  * @see	attach_panel_set_result_cb()
  * @see	attach_panel_unset_result_cb()
  */
-typedef void (*attach_panel_result_cb)(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *user_data);
+typedef void (*attach_panel_result_cb)(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *user_data);
+
+/**
+ * @brief Called when reserved events are published from the panel-side.
+ *
+ * @since_tizen 2.4
+ * @param[in] attach_panel Attach panel handler
+ * @param[in] event Attach panel event
+ * @param[in] event_info additional event information.\n
+ *                       This can be NULL if there are no necessary information.
+ * @param[in] user_data user data
+ * @pre The callback must be registered using attach_panel_set_event_cb()
+ *
+ * @see	attach_panel_set_event_cb()
+ * @see	attach_panel_unset_event_cb()
+ */
+typedef void (*attach_panel_event_cb)(attach_panel_h attach_panel, attach_panel_event_e event, void *event_info, void *user_data);
 
 /**
  * @brief Enumeration for values of attach-panel response types.
@@ -120,6 +151,8 @@ typedef enum attach_panel_error {
  * @see attach_panel_set_extra_data()
  * @see attach_panel_set_result_cb()
  * @see attach_panel_unset_result_cb()
+ * @see attach_panel_set_event_cb()
+ * @see attach_panel_unset_event_cb()
  * @see attach_panel_show()
  * @see attach_panel_hide()
  * @see attach_panel_get_visibility()
@@ -133,7 +166,7 @@ typedef enum attach_panel_error {
  *   Evas_Object *conformant;
  * };
  *
- * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *data)
+ * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *data)
  * {
  *   char **select = NULL;
  *   int i = 0;
@@ -141,6 +174,10 @@ typedef enum attach_panel_error {
  *   int ret = APP_CONTROL_ERROR_NONE;
  *
  *   if (!result) {
+ *     // Error handling
+ *   }
+ *
+ *   if (APP_CONTROL_RESULT_SUCCEEDED != result_code) {
  *     // Error handling
  *   }
  *
@@ -216,7 +253,7 @@ typedef enum attach_panel_error {
  *
  * @endcode
  */
-extern int attach_panel_create(Evas_Object *conformant, attach_panel_h *attach_panel);
+int attach_panel_create(Evas_Object *conformant, attach_panel_h *attach_panel);
 
 /**
  * @brief Destroys the attach panel.
@@ -236,6 +273,8 @@ extern int attach_panel_create(Evas_Object *conformant, attach_panel_h *attach_p
  * @see attach_panel_set_extra_data()
  * @see attach_panel_set_result_cb()
  * @see attach_panel_unset_result_cb()
+ * @see attach_panel_set_event_cb()
+ * @see attach_panel_unset_event_cb()
  * @see attach_panel_show()
  * @see attach_panel_hide()
  * @see attach_panel_get_visibility()
@@ -298,17 +337,22 @@ extern int attach_panel_create(Evas_Object *conformant, attach_panel_h *attach_p
  *
  * @endcode
  */
-extern int attach_panel_destroy(attach_panel_h attach_panel);
+int attach_panel_destroy(attach_panel_h attach_panel);
 
 /**
  * @brief Adds a content category in the attach panel.
  * @since_tizen 2.4
  * @privlevel public
+ * @privilege %http://tizen.org/privilege/mediastorage
+ * @privilege %http://tizen.org/privilege/camera
+ * @privilege %http://tizen.org/privilege/recorder
+ * @privilege %http://tizen.org/privilege/appmanager.launch
  * @remarks The caller app has to check the return value of this function.\n
  *          Content categories will be shown as the sequence of using @a attach_panel_add_content_category.\n
  *          Some contents need time to load it all.\n
  *          So, it is needed to use this before the mainloop of attach_panel_show().\n
  *          Privileges,\n
+ *          %http://tizen.org/privilege/mediastorage, for using ATTACH_PANEL_CONTENT_CATEGORY_IMAGE or ATTACH_PANEL_CONTENT_CATEGORY_CAMERA\n
  *          %http://tizen.org/privilege/camera, for using ATTACH_PANEL_CONTENT_CATEGORY_CAMERA\n
  *          %http://tizen.org/privilege/recorder, for using ATTACH_PANEL_CONTENT_CATEGORY_VOICE\n
  *          %http://tizen.org/privilege/appmanager.launch, for adding content categories on the More tab\n
@@ -318,7 +362,7 @@ extern int attach_panel_destroy(attach_panel_h attach_panel);
  *
  * @param[in] attach_panel Attach panel handler
  * @param[in] content_category The content_category to be added in the @a attach_panel.
- * @param[in] The attach panel send some information using @a bundle.
+ * @param[in] extra_data The attach panel send some information using @a bundle.
  * @return #ATTACH_PANEL_ERROR_NONE on success,
  *         otherwise a negative error value
  * @retval #ATTACH_PANEL_ERROR_NONE Successful
@@ -355,7 +399,7 @@ extern int attach_panel_destroy(attach_panel_h attach_panel);
  *   Evas_Object *conformant;
  * };
  *
- * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *data)
+ * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *data)
  * {
  *   char **select = NULL;
  *   int i = 0;
@@ -363,6 +407,10 @@ extern int attach_panel_destroy(attach_panel_h attach_panel);
  *   int ret = APP_CONTROL_ERROR_NONE;
  *
  *   if (!result) {
+ *     // Error handling
+ *   }
+ *
+ *   if (APP_CONTROL_RESULT_SUCCEEDED != result_code) {
  *     // Error handling
  *   }
  *
@@ -438,7 +486,7 @@ extern int attach_panel_destroy(attach_panel_h attach_panel);
  *
  * @endcode
  */
-extern int attach_panel_add_content_category(attach_panel_h attach_panel, attach_panel_content_category_e content_category, bundle * extra_data);
+int attach_panel_add_content_category(attach_panel_h attach_panel, attach_panel_content_category_e content_category, bundle *extra_data);
 
 /**
  * @brief Removes the content category from the attach panel.
@@ -531,7 +579,7 @@ extern int attach_panel_add_content_category(attach_panel_h attach_panel, attach
  *
  * @endcode
  */
-extern int attach_panel_remove_content_category(attach_panel_h attach_panel, attach_panel_content_category_e content_category);
+int attach_panel_remove_content_category(attach_panel_h attach_panel, attach_panel_content_category_e content_category);
 
 /**
  * @brief Sets extra data to send to the content category using a bundle.
@@ -544,7 +592,7 @@ extern int attach_panel_remove_content_category(attach_panel_h attach_panel, att
  *
  * @param[in] attach_panel Attach panel handler
  * @param[in] content_category The content_category to be set the some information in the @a attach_panel.
- * @param[in] The attach panel set some information using @a bundle.
+ * @param[in] extra_data The attach panel set some information using @a bundle.
  * @return #ATTACH_PANEL_ERROR_NONE on success,
  *         otherwise a negative error value
  * @retval #ATTACH_PANEL_ERROR_NONE Successful
@@ -580,7 +628,7 @@ extern int attach_panel_remove_content_category(attach_panel_h attach_panel, att
  *   Evas_Object *conformant;
  * };
  *
- * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *data)
+ * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *data)
  * {
  *   char **select = NULL;
  *   int i = 0;
@@ -588,6 +636,10 @@ extern int attach_panel_remove_content_category(attach_panel_h attach_panel, att
  *   int ret = APP_CONTROL_ERROR_NONE;
  *
  *   if (!result) {
+ *     // Error handling
+ *   }
+ *
+ *   if (APP_CONTROL_RESULT_SUCCEEDED != result_code) {
  *     // Error handling
  *   }
  *
@@ -604,7 +656,7 @@ extern int attach_panel_remove_content_category(attach_panel_h attach_panel, att
  *   free(select);
  * }
  *
- * static void _event_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ * static void _reset_bundle_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
  * {
  *   struct appdata *ad = data;
  *   bundle *extra_data = NULL;
@@ -638,7 +690,6 @@ extern int attach_panel_remove_content_category(attach_panel_h attach_panel, att
  *   }
  *
  *   bundle_free(extra_data);
- *
  * }
  *
  * static int app_control(void *data)
@@ -700,7 +751,7 @@ extern int attach_panel_remove_content_category(attach_panel_h attach_panel, att
  *
  * @endcode
  */
-extern int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_panel_content_category_e content_category, bundle *extra_data);
+int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_panel_content_category_e content_category, bundle *extra_data);
 
 /**
  * @brief Sets the result callback that will be called when an user selects and confirms something to attach in the attach panel.
@@ -741,7 +792,7 @@ extern int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_panel
  *   Evas_Object *conformant;
  * };
  *
- * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *data)
+ * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *data)
  * {
  *   char **select = NULL;
  *   int i = 0;
@@ -749,6 +800,10 @@ extern int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_panel
  *   int ret = APP_CONTROL_ERROR_NONE;
  *
  *   if (!result) {
+ *     // Error handling
+ *   }
+ *
+ *   if (APP_CONTROL_RESULT_SUCCEEDED != result_code) {
  *     // Error handling
  *   }
  *
@@ -824,7 +879,7 @@ extern int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_panel
  *
  * @endcode
  */
-extern int attach_panel_set_result_cb(attach_panel_h attach_panel, attach_panel_result_cb result_cb, void *user_data);
+int attach_panel_set_result_cb(attach_panel_h attach_panel, attach_panel_result_cb result_cb, void *user_data);
 
 /**
  * @brief Unsets the result callback that will be called when an user selects and confirms something to attach in the attach panel.
@@ -832,7 +887,6 @@ extern int attach_panel_set_result_cb(attach_panel_h attach_panel, attach_panel_
  * @remarks The caller app has to check the return value of this function.\n
  *
  * @param[in] attach_panel Attach panel handler
- * @param[in] result_cb Attach panel result callback
  * @return #ATTACH_PANEL_ERROR_NONE on success,
  *         otherwise a negative error value
  * @retval #ATTACH_PANEL_ERROR_NONE Successful
@@ -908,7 +962,157 @@ extern int attach_panel_set_result_cb(attach_panel_h attach_panel, attach_panel_
  *
  * @endcode
  */
-extern int attach_panel_unset_result_cb(attach_panel_h attach_panel);
+int attach_panel_unset_result_cb(attach_panel_h attach_panel);
+
+/**
+ * @brief Sets the event callback that will be called when reserved events are published from the panel-side.
+ * @since_tizen 2.4
+ * @remarks The caller app has to check the return value of this function.\n
+ *          We can set only one callback function with this API.\n
+ *          If you set multiple callbacks with this API,\n
+ *          the last one is registered only.
+ *
+ * @param[in] attach_panel Attach panel handler
+ * @param[in] panel_event_cb Attach panel event callback
+ * @param[in] user_data User data
+ * @return #ATTACH_PANEL_ERROR_NONE on success,
+ *         otherwise a negative error value
+ * @retval #ATTACH_PANEL_ERROR_NONE Successful
+ * @retval #ATTACH_PANEL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #ATTACH_PANEL_ERROR_ALREADY_DESTROYED already removed
+ *
+ * @pre Call attach_panel_create() before calling this function.
+ * @post The event_cb set with attach_panel_set_event_cb() will be called after publishing reserved events.
+ * @see attach_panel_create()
+ * @see attach_panel_destroy()
+ * @see attach_panel_show()
+ * @see attach_panel_hide()
+ * @see attach_panel_get_visibility()
+ * @see attach_panel_unset_event_cb()
+ * @see attach_panel_event_cb
+ *
+ * @par Example
+ * @code
+ * #include <attach_panel.h>
+ *
+ * struct appdata {
+ *   Evas_Object *attach_panel;
+ *   Evas_Object *conformant;
+ * };
+ *
+ * static void _event_cb(attach_panel_h attach_panel, attach_panel_event_e event, void *event_info, void *data)
+ * {
+ *   switch (event) {
+ *   case ATTACH_PANEL_EVENT_SHOW_START:
+ *     // event handling
+ *     break;
+ *   case ATTACH_PANEL_EVENT_SHOW_FINISH:
+ *     // event handling
+ *     break;
+ *   case ATTACH_PANEL_EVENT_HIDE_START:
+ *     // event handling
+ *     break;
+ *   case ATTACH_PANEL_EVENT_HIDE_FINISH:
+ *     // event handling
+ *     break;
+ *   default:
+ *     // error handling
+ *     break;
+ *   }
+ * }
+ *
+ * static int app_control(void *data)
+ * {
+ *   struct appdata *ad = data;
+ *   int ret = ATTACH_PANEL_ERROR_NONE;
+ *
+ *   if (!ad) {
+ *     // Error handling
+ *   }
+ *
+ *   if (!ad->conformant) {
+ *     // Error handling
+ *   }
+ *
+ *   ret = attach_panel_create(ad->conformant, &ad->attach_panel);
+ *   if (ATTACH_PANEL_ERROR_NONE != ret) {
+ *      // Error handling
+ *   }
+ *
+ *   ret = attach_panel_set_event_cb(ad->attach_panel, _event_cb, ad);
+ *   if (ATTACH_PANEL_ERROR_NONE != ret) {
+ *      // Error handling
+ *   }
+ *
+ *   // other routines
+ *
+ * 	 return 0;
+ * }
+ *
+ * @endcode
+ */
+int attach_panel_set_event_cb(attach_panel_h attach_panel, attach_panel_event_cb panel_event_cb, void *user_data);
+
+/**
+ * @brief Unsets the event callback
+ * @since_tizen 2.4
+ * @remarks The caller app has to check the return value of this function.
+ *
+ * @param[in] attach_panel Attach panel handler
+ * @param[in] result_cb Attach panel result callback
+ * @return #ATTACH_PANEL_ERROR_NONE on success,
+ *         otherwise a negative error value
+ * @retval #ATTACH_PANEL_ERROR_NONE Successful
+ * @retval #ATTACH_PANEL_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #ATTACH_PANEL_ERROR_ALREADY_DESTROYED already removed
+ *
+ * @pre Call attach_panel_create() before calling this function.
+ * @see attach_panel_create()
+ * @see attach_panel_destroy()
+ * @see attach_panel_show()
+ * @see attach_panel_hide()
+ * @see attach_panel_get_visibility()
+ * @see attach_panel_set_event_cb()
+ *
+ * @par Example
+ * @code
+ * #include <attach_panel.h>
+ *
+ * struct appdata {
+ *   Evas_Object *attach_panel;
+ *   Evas_Object *conformant;
+ * };
+ *
+ * static int app_terminate(void *data)
+ * {
+ *   struct appdata *ad = data;
+ *   int ret = 0;
+ *
+ *   if (!ad) {
+ *     // Error handling
+ *   }
+ *
+ *   if (!ad->attach_panel) {
+ *     // Error handling
+ *   }
+ *
+ *   ret = attach_panel_unset_event_cb(ad->attach_panel);
+ *   if (ATTACH_PANEL_ERROR_NONE != ret) {
+ *      // Error handling
+ *   }
+ *
+ *   ret = attach_panel_destroy(ad->attach_panel);
+ *   if (ATTACH_PANEL_ERROR_NONE != ret) {
+ *      // Error handling
+ *   }
+ *   ad->attach_panel = NULL;
+ *
+ * 	 return 0;
+ * }
+ *
+ * @endcode
+ */
+int attach_panel_unset_event_cb(attach_panel_h attach_panel);
 
 /**
  * @brief Shows the attach panel, asynchronously.
@@ -942,7 +1146,7 @@ extern int attach_panel_unset_result_cb(attach_panel_h attach_panel);
  *   Evas_Object *conformant;
  * };
  *
- * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, void *data)
+ * static void _result_cb(attach_panel_h attach_panel, attach_panel_content_category_e content_category, app_control_h result, app_control_result_e result_code, void *data)
  * {
  *   char **select = NULL;
  *   int i = 0;
@@ -950,6 +1154,10 @@ extern int attach_panel_unset_result_cb(attach_panel_h attach_panel);
  *   int ret = APP_CONTROL_ERROR_NONE;
  *
  *   if (!result) {
+ *     // Error handling
+ *   }
+ *
+ *   if (APP_CONTROL_RESULT_SUCCEEDED != result_code) {
  *     // Error handling
  *   }
  *
@@ -1025,7 +1233,7 @@ extern int attach_panel_unset_result_cb(attach_panel_h attach_panel);
  *
  * @endcode
  */
-extern int attach_panel_show(attach_panel_h attach_panel);
+int attach_panel_show(attach_panel_h attach_panel);
 
 /**
  * @brief Hides the attach panel, asynchronously.
@@ -1108,7 +1316,7 @@ extern int attach_panel_show(attach_panel_h attach_panel);
  *
  * @endcode
  */
-extern int attach_panel_hide(attach_panel_h attach_panel);
+int attach_panel_hide(attach_panel_h attach_panel);
 
 /**
  * @brief Gets a value that indicates whether the attach_panel is visible.
@@ -1200,7 +1408,7 @@ extern int attach_panel_hide(attach_panel_h attach_panel);
  *
  * @endcode
  */
-extern int attach_panel_get_visibility(attach_panel_h attach_panel, bool *visible);
+int attach_panel_get_visibility(attach_panel_h attach_panel, bool *visible);
 
 /**
  * @}

@@ -25,3 +25,6 @@ msgstr "Contactos"
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
 msgstr "Mis archivos"
 
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "Grabar\nvídeo"
+

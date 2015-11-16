@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef __TIZEN_ATTACH_PANEL_GESTURE_H__
-#define __TIZEN_ATTACH_PANEL_GESTURE_H__
+#ifndef __ATTACH_PANEL_LIST_H__
+#define __ATTACH_PANEL_LIST_H__
 
-#include <Elementary.h>
-
-
-
-extern void _gesture_show(attach_panel_h attach_panel);
-extern void _gesture_hide(attach_panel_h attach_panel);
-
-extern void _gesture_set_full_mode(attach_panel_h attach_panel);
-extern attach_panel_state_e _gesture_get_state(void);
-extern void _gesture_set_state(attach_panel_state_e state);
-
-extern Evas_Object *_gesture_create(attach_panel_h attach_panel);
-extern void _gesture_destroy(attach_panel_h attach_panel);
-
+extern Eina_List *_list_sort_by_rua(Eina_List *content_list);
 
 #endif
