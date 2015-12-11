@@ -51,7 +51,7 @@ static int __rua_stat_tag_iter_cb(const char *rua_stat_tag, void *data)
 		continue_if(!content_info->innate_content_info);
 		if (!strcmp(rua_stat_tag, content_info->innate_content_info->appid)) {
 			content_info->order = list_info.ordering;
-			list_info.ordering ++;
+			list_info.ordering++;
 		}
 	}
 

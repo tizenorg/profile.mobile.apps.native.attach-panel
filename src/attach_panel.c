@@ -193,7 +193,7 @@ static void __rotate_cb(void *data, Evas_Object *obj, void *event)
 	elm_win_screen_size_get(win, NULL, NULL, &w, &h);
 	_D("Angle is %d degree, win size is %d, %d", angle, w, h);
 
-	switch(angle) {
+	switch (angle) {
 	case 90:
 	case 270:
 		_D("resize the attach-panel to land(%d)", angle);

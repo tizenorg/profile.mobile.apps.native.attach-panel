@@ -234,7 +234,7 @@ static void __remove_content_categories(Evas_Object *ui_manager)
 		Evas_Object *page = NULL;
 
 		_ui_manager_destroy_content(content_info, attach_panel);
-		page= evas_object_data_get(content_info->content, DATA_KEY_PAGE);
+		page = evas_object_data_get(content_info->content, DATA_KEY_PAGE);
 		if (page) {
 			elm_object_part_content_unset(page, "content");
 			_page_destroy(page);
