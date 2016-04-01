@@ -52,35 +52,35 @@
 #endif
 
 #define retv_if(expr, val) do { \
-	if(expr) { \
+	if (expr) { \
 		_E("(%s) -> %s() return", #expr, __FUNCTION__); \
 		return (val); \
 	} \
 } while (0)
 
 #define ret_if(expr) do { \
-	if(expr) { \
+	if (expr) { \
 		_E("(%s) -> %s() return", #expr, __FUNCTION__); \
 		return; \
 	} \
 } while (0)
 
 #define goto_if(expr, val) do { \
-	if(expr) { \
+	if (expr) { \
 		_E("(%s) -> goto", #expr); \
 		goto val; \
 	} \
 } while (0)
 
 #define break_if(expr) { \
-	if(expr) { \
+	if (expr) { \
 		_E("(%s) -> break", #expr); \
 		break; \
 	} \
 }
 
 #define continue_if(expr) { \
-	if(expr) { \
+	if (expr) { \
 		_E("(%s) -> continue", #expr); \
 		continue; \
 	} \
