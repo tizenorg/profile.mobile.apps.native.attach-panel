@@ -18,9 +18,7 @@
 #include <Elementary.h>
 #include <tizen.h>
 #include <rua.h>
-#if 0 /* privilege_checker is not included in the 3.0 */
 #include <rua_stat.h>
-#endif
 
 #include "attach_panel.h"
 #include "attach_panel_internal.h"
@@ -88,14 +86,11 @@ static int __sort_cb(const void *d1, const void *d2)
 Eina_List * _list_sort_by_rua(Eina_List *content_list)
 {
 	int ret = 0;
-
 	retv_if(!content_list, NULL);
 
 	list_info.ordering = 1;
-#if 0 /* privilege_checker is not included in the 3.0 */
 	ret = rua_stat_get_stat_tags("attach-panel", __rua_stat_tag_iter_cb, content_list);
 	retv_if(0 != ret, NULL);
-#endif
 
 	content_list = eina_list_sort(content_list, eina_list_count(content_list), __sort_cb);
 
