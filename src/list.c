@@ -35,6 +35,7 @@ static struct {
 	.ordering = 1,
 };
 
+#if 0 /* rua_stat_get_stat_tags API is not included in the 3.0 */
 static int __rua_stat_tag_iter_cb(const char *rua_stat_tag, void *data)
 {
 	Eina_List *content_list = data;
@@ -57,6 +58,7 @@ static int __rua_stat_tag_iter_cb(const char *rua_stat_tag, void *data)
 
 	return 0;
 }
+#endif
 
 
 
@@ -87,12 +89,11 @@ static int __sort_cb(const void *d1, const void *d2)
 
 Eina_List * _list_sort_by_rua(Eina_List *content_list)
 {
-	int ret = 0;
-
 	retv_if(!content_list, NULL);
 
 	list_info.ordering = 1;
-#if 0 /* privilege_checker is not included in the 3.0 */
+#if 0 /* rua_stat_get_stat_tags API is not included in the 3.0 */
+	int ret = 0;
 	ret = rua_stat_get_stat_tags("attach-panel", __rua_stat_tag_iter_cb, content_list);
 	retv_if(0 != ret, NULL);
 #endif
