@@ -90,7 +90,7 @@ Eina_List * _list_sort_by_rua(Eina_List *content_list)
 
 	list_info.ordering = 1;
 	ret = rua_stat_get_stat_tags("attach-panel", __rua_stat_tag_iter_cb, content_list);
-	retv_if(0 != ret, NULL);
+	retv_if(0 != ret, content_list);
 
 	content_list = eina_list_sort(content_list, eina_list_count(content_list), __sort_cb);
 
