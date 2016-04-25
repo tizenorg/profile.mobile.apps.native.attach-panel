@@ -301,7 +301,6 @@ static void __launch_app(content_s *content_info)
 		_bundle_add_to_app_control(content_info->extra_data, app_control);
 	}
 
-#if 0 /* privilege_checker is not included in the 3.0 */
 	ret = app_control_add_extra_data(app_control, AUL_SVC_K_RUA_STAT_CALLER, "attach-panel");
 	if (APP_CONTROL_ERROR_NONE != ret)
 		_E("Fail to add 'AUL_SVC_K_RUA_STAT_CALLER'");
@@ -309,7 +308,6 @@ static void __launch_app(content_s *content_info)
 	ret = app_control_add_extra_data(app_control, AUL_SVC_K_RUA_STAT_TAG, content_info->innate_content_info->appid);
 	if (APP_CONTROL_ERROR_NONE != ret)
 		_E("Fail to add 'AUL_SVC_K_RUA_STAT_TAG'");
-#endif
 
 	ret = app_control_add_extra_data(app_control, "__CALLER_PANEL__", "attach-panel");
 	if (APP_CONTROL_ERROR_NONE != ret)
