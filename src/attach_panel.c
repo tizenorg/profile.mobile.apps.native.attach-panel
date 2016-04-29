@@ -144,6 +144,15 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDE
 		.content_category = ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER,
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_APP,
 	},
+	{
+		.appid = "attach-panel-document",
+		.name = "Document",
+		.operation = APP_CONTROL_OPERATION_CREATE_CONTENT,
+		.selection_mode = "single",
+		.tabbar_name = "Document",
+		.content_category = ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT,
+		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_UG,
+	},
 };
 
 
