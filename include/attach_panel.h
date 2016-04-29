@@ -57,6 +57,10 @@ typedef enum attach_panel_content_category {
 	ATTACH_PANEL_CONTENT_CATEGORY_CONTACT, /**< Attaching contact data from the contacts */
 	ATTACH_PANEL_CONTENT_CATEGORY_MYFILES, /**< Attaching files data from my files */
 	ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER, /**< Taking a video clip to attach */
+	/**
+	 * @since_tizen 3.0
+	 */
+	ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT, /**< attaching files from the document list */
 } attach_panel_content_category_e;
 
 /**
@@ -389,6 +393,7 @@ int attach_panel_destroy(attach_panel_h attach_panel);
  * @see ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR
  * @see ATTACH_PANEL_CONTENT_CATEGORY_CONTACT
  * @see ATTACH_PANEL_CONTENT_CATEGORY_MYFILES
+ * @see ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT
  *
  * @par Example
  * @code
@@ -520,6 +525,7 @@ int attach_panel_add_content_category(attach_panel_h attach_panel, attach_panel_
  * @see ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR
  * @see ATTACH_PANEL_CONTENT_CATEGORY_CONTACT
  * @see ATTACH_PANEL_CONTENT_CATEGORY_MYFILES
+ * @see ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT
  *
  * @par Example
  * @code
@@ -618,6 +624,7 @@ int attach_panel_remove_content_category(attach_panel_h attach_panel, attach_pan
  * @see ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR
  * @see ATTACH_PANEL_CONTENT_CATEGORY_CONTACT
  * @see ATTACH_PANEL_CONTENT_CATEGORY_MYFILES
+ * @see ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT
  *
  * @par Example
  * @code

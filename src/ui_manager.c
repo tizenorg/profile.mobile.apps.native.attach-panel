@@ -53,6 +53,7 @@ Evas_Object *_ui_manager_create_content(Evas_Object *page, content_s *content_in
 	case ATTACH_PANEL_CONTENT_CATEGORY_IMAGE:
 	case ATTACH_PANEL_CONTENT_CATEGORY_CAMERA:
 	case ATTACH_PANEL_CONTENT_CATEGORY_VOICE:
+	case ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT:
 		content = _ug_create(content_info->innate_content_info->appid
 						, content_info->innate_content_info->operation
 						, content_info->innate_content_info->selection_mode
@@ -98,6 +99,7 @@ void _ui_manager_destroy_content(content_s *content_info, attach_panel_h attach_
 	case ATTACH_PANEL_CONTENT_CATEGORY_IMAGE:
 	case ATTACH_PANEL_CONTENT_CATEGORY_CAMERA:
 	case ATTACH_PANEL_CONTENT_CATEGORY_VOICE:
+	case ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT:
 		_ug_destroy(content_info->content);
 		break;
 	default:
