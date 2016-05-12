@@ -187,3 +187,16 @@ void _content_list_set_resume(Eina_List *list, int is_ug)
 		}
 	}
 }
+
+void _content_list_set_flick(Eina_List *list, Eina_Bool flick)
+{
+	content_s *content_info = NULL;
+	const Eina_List *l = NULL;
+
+	ret_if(!list);
+
+	EINA_LIST_FOREACH(list, l, content_info) {
+		continue_if(!content_info);
+		content_info->flick = flick;
+	}
+}

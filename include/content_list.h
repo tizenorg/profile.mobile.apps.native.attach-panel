@@ -25,6 +25,6 @@ void _content_list_send_message(Eina_List *list, const char *key, const char *va
 void _content_list_send_message_to_content(Eina_List *list, const char *key, const char *value, int cur_page_no);
 void _content_list_set_pause(Eina_List *list, int is_ug);
 void _content_list_set_resume(Eina_List *list, int is_ug);
-
+void _content_list_set_flick(Eina_List *list, Eina_Bool flick);
 
 #endif

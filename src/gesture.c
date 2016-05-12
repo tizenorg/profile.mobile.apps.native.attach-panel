@@ -225,7 +225,7 @@ void _gesture_hide(attach_panel_h attach_panel)
 		attach_panel->attach_panel_port_state = ATTACH_PANEL_STATE_HIDE;
 	}
 	gesture_info_s.attach_panel_state = ATTACH_PANEL_STATE_HIDE;
-	attach_panel->flick = EINA_TRUE;
+	_content_list_set_flick(attach_panel->content_list, EINA_TRUE);
 	__attach_panel_transit_set(attach_panel, attach_panel->transit_height, 0, TRANSIT_DURATION);
 }
 
@@ -250,6 +250,7 @@ void _gesture_set_full_mode(attach_panel_h attach_panel)
 static Evas_Event_Flags __flick_end_cb(void *data, void *event_info)
 {
 	attach_panel_h attach_panel = data;
+	content_s *content_info = NULL;
 	Elm_Gesture_Line_Info *line_info = (Elm_Gesture_Line_Info *) event_info;
 
 	retv_if(!attach_panel, EVAS_EVENT_FLAG_ON_HOLD);
@@ -267,8 +268,11 @@ static Evas_Event_Flags __flick_end_cb(void *data, void *event_info)
 		return EVAS_EVENT_FLAG_ON_HOLD;
 	}
 
-	if (!attach_panel->flick) {
-		_D("attach_panel flick is disable");
+	content_info = eina_list_nth(attach_panel->content_list, attach_panel->cur_page_no);
+	retv_if(!content_info, EVAS_EVENT_FLAG_ON_HOLD);
+
+	if (!content_info->flick && line_info->momentum.my >= 0) {
+		_D("flick of current page(%d) is disable", attach_panel->cur_page_no);
 		return EVAS_EVENT_FLAG_ON_HOLD;
 	}
 

@@ -314,7 +314,6 @@ EXPORT_API int attach_panel_create(Evas_Object *conformant, attach_panel_h *atta
 	elm_object_part_content_set(conformant, "elm.swallow.attach_panel", panel->ui_manager);
 	panel->is_delete = EINA_FALSE;
 	panel->rotate = EINA_FALSE;
-	panel->flick = EINA_TRUE;
 	panel->cur_page_no = 0;
 	panel->magic_no = 0x1024;
 

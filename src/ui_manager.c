@@ -134,6 +134,7 @@ int _ui_manager_append_content_category(Evas_Object *ui_manager, innate_content_
 	content_info->innate_content_info = innate_content_info;
 	content_info->extra_data = extra_data;
 	content_info->order = ORDER_MAX;
+	content_info->flick = EINA_TRUE;
 
 	if (innate_content_info->is_ug) {
 		/* UG side */
