@@ -49,12 +49,12 @@ static void __result_cb(ui_gadget_h ui_gadget, app_control_h result, void *priv)
 
 		_D("attach panel flick %s", enable);
 		if (!strcmp(enable, MODE_ENABLE)) {
-			content_info->attach_panel->flick = EINA_TRUE;
+			content_info->flick = EINA_TRUE;
 		} else if (!strcmp(enable, MODE_DISABLE)) {
-			content_info->attach_panel->flick = EINA_FALSE;
+			content_info->flick = EINA_FALSE;
 		} else {
 			_E("__ATTACH_PANEL_FLICK_DOWN__ value is wrong type(%s)", enable);
-			content_info->attach_panel->flick = EINA_TRUE;
+			content_info->flick = EINA_TRUE;
 		}
 		return;
 	}

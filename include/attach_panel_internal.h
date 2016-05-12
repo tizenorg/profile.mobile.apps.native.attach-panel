@@ -235,7 +235,6 @@ struct _attach_panel {
 
 	Eina_Bool is_delete;
 	Eina_Bool rotate;
-	Eina_Bool flick;
 	int cur_page_no;
 	int cur_event_state;
 	int magic_no;
@@ -276,6 +275,7 @@ struct _content {
 	bundle *extra_data;
 	int index;
 	int order;
+	Eina_Bool flick;
 };
 typedef struct _content content_s;
 
