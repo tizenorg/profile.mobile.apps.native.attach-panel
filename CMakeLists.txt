@@ -49,9 +49,9 @@ pkg_check_modules(pkgs REQUIRED
 	evas
 	feedback
 	isf
-#	security-privilege-checker
 	ui-gadget-1
 	rua
+	cynara-client
 )
 
 FOREACH(flag ${pkgs_CFLAGS})

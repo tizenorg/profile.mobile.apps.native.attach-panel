@@ -153,7 +153,7 @@ void _content_list_set_pause(Eina_List *list, int is_ug)
 				_D("Fail to get the ui gadget");
 				continue;
 			}
-#if 0 /* privilege_checker is not included in the 3.0 */
+#if 0 /* This API is not included in the 3.0 */
 			ug_pause_ug(ui_gadget);
 #endif
 		}
@@ -181,7 +181,7 @@ void _content_list_set_resume(Eina_List *list, int is_ug)
 				_D("Fail to get the ui gadget");
 				continue;
 			}
-#if 0 /* privilege_checker is not included in the 3.0 */
+#if 0 /* This API is not included in the 3.0 */
 			ug_resume_ug(ui_gadget);
 #endif
 		}
