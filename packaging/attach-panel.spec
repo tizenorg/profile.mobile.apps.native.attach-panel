@@ -27,9 +27,9 @@ BuildRequires: pkgconfig(elementary)
 BuildRequires: pkgconfig(evas)
 BuildRequires: pkgconfig(feedback)
 BuildRequires: pkgconfig(isf)
-#BuildRequires: pkgconfig(security-privilege-checker)
 BuildRequires: pkgconfig(ui-gadget-1)
 BuildRequires: pkgconfig(rua)
+BuildRequires: pkgconfig(cynara-client)
 
 %description
 Description: Attach Panel

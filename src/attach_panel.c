@@ -21,10 +21,9 @@
 #include <isf_control.h>
 #include <system_info.h>
 #include <tizen.h>
-#if 0 /* privilege_checker is not included in the 3.0 */
-#include <privilege_checker.h>
-#endif
 #include <ui-gadget.h>
+#include <cynara-client.h>
+#include <fcntl.h>
 
 #include "attach_panel.h"
 #include "attach_panel_internal.h"
@@ -415,11 +414,50 @@ static void __iter_cb(const char *key, const int type, bundle_keyval_t *kv, void
 
 
 
-#if 0 /* privilege_checker is not included in the 3.0 */
+#define SMACK_LABEL_LEN 255
+static int __check_privilege(const char *privilege)
+{
+	cynara *p_cynara;
+
+	int fd = 0;
+	int ret = 0;
+
+	char subject_label[SMACK_LABEL_LEN +1] = "";
+	char uid[10] = {0, };
+	char *client_session = "";
+
+	ret = cynara_initialize(&p_cynara, NULL);
+	goto_if(ret != CYNARA_API_SUCCESS, OUT);
+
+	fd = open("/proc/self/attr/current", O_RDONLY);
+	goto_if (fd < 0, OUT);
+
+	ret = read(fd, subject_label, SMACK_LABEL_LEN);
+	if (ret < 0) {
+		_E("read is failed");
+		close(fd);
+		goto OUT;
+	}
+	close(fd);
+
+	snprintf(uid, 10, "%d", getuid());
+
+	ret = cynara_check(p_cynara, subject_label, client_session, uid, privilege);
+	goto_if (ret != CYNARA_API_ACCESS_ALLOWED, OUT);
+
+	ret = 0;
+
+OUT:
+	if (p_cynara)
+		cynara_finish(p_cynara);
+	return ret;
+}
+
+
+
 static const char *const PRIVILEGE_CAMERA = "http://tizen.org/privilege/camera";
 static const char *const PRIVILEGE_RECORDER = "http://tizen.org/privilege/recorder";
 static const char *const PRIVILEGE_APPMANAGER_LAUNCH = "http://tizen.org/privilege/appmanager.launch";
-#endif
 EXPORT_API int attach_panel_add_content_category(attach_panel_h attach_panel, attach_panel_content_category_e content_category, bundle *extra_data)
 {
 	content_s *content_info = NULL;
@@ -444,33 +482,24 @@ EXPORT_API int attach_panel_add_content_category(attach_panel_h attach_panel, at
 		break_if(SYSTEM_INFO_ERROR_NONE != ret);
 		retv_if(false == value, ATTACH_PANEL_ERROR_UNSUPPORTED_CONTENT_CATEGORY);
 
-#if 0 /* privilege_checker is not included in the 3.0 */
-		ret = privilege_checker_check_privilege(PRIVILEGE_CAMERA);
-		retv_if(PRIVILEGE_CHECKER_ERR_UNDECLARED_PRIVILEGE == ret, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
-		break_if(PRIVILEGE_CHECKER_ERR_NONE != ret);
-#endif
+		ret = __check_privilege(PRIVILEGE_CAMERA);
+		retv_if(ret < 0, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
 		break;
 	case ATTACH_PANEL_CONTENT_CATEGORY_VOICE:
 		ret = system_info_get_platform_bool(PLATFORM_FEATURE_MICROPHONE, &value);
 		break_if(SYSTEM_INFO_ERROR_NONE != ret);
 		retv_if(false == value, ATTACH_PANEL_ERROR_UNSUPPORTED_CONTENT_CATEGORY);
 
-#if 0 /* privilege_checker is not included in the 3.0 */
-		ret = privilege_checker_check_privilege(PRIVILEGE_RECORDER);
-		retv_if(PRIVILEGE_CHECKER_ERR_UNDECLARED_PRIVILEGE == ret, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
-		break_if(PRIVILEGE_CHECKER_ERR_NONE != ret);
-#endif
+		ret = __check_privilege(PRIVILEGE_RECORDER);
+		retv_if(ret < 0, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
 		break;
 	case ATTACH_PANEL_CONTENT_CATEGORY_VIDEO:
 	case ATTACH_PANEL_CONTENT_CATEGORY_AUDIO:
 	case ATTACH_PANEL_CONTENT_CATEGORY_CALENDAR:
 	case ATTACH_PANEL_CONTENT_CATEGORY_CONTACT:
 	case ATTACH_PANEL_CONTENT_CATEGORY_MYFILES:
-#if 0 /* privilege_checker is not included in the 3.0 */
-		ret = privilege_checker_check_privilege(PRIVILEGE_APPMANAGER_LAUNCH);
-		retv_if(PRIVILEGE_CHECKER_ERR_UNDECLARED_PRIVILEGE == ret, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
-		break_if(PRIVILEGE_CHECKER_ERR_NONE != ret);
-#endif
+		ret = __check_privilege(PRIVILEGE_APPMANAGER_LAUNCH);
+		retv_if(ret < 0, ATTACH_PANEL_ERROR_PERMISSION_DENIED);
 		break;
 	default:
 		break;
