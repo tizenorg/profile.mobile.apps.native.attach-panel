@@ -192,6 +192,7 @@ void _gesture_show(attach_panel_h attach_panel)
 {
 	gesture_info_s.attach_panel_state = ATTACH_PANEL_STATE_HALF;
 	_D("gesture show start");
+	elm_config_focus_autoscroll_mode_set(ELM_FOCUS_AUTOSCROLL_MODE_NONE);
 
 	if (attach_panel->rotate) {
 		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_MULTIPLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
@@ -215,6 +216,8 @@ void _gesture_show(attach_panel_h attach_panel)
 void _gesture_hide(attach_panel_h attach_panel)
 {
 	_D("gestrue hide start");
+	elm_config_focus_autoscroll_mode_set(ELM_FOCUS_AUTOSCROLL_MODE_BRING_IN);
+
 	if (attach_panel->rotate) {
 		attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_HIDE;
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,half", "");

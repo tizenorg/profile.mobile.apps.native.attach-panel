@@ -627,6 +627,7 @@ EXPORT_API int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_p
 			return ATTACH_PANEL_ERROR_OUT_OF_MEMORY;
 
 		}
+		_bundle_add_to_app_control(content_info->extra_data, app_control);
 		ug_send_message(ui_gadget, app_control);
 		ret = app_control_destroy(app_control);
 		retv_if(APP_CONTROL_ERROR_NONE != ret, ATTACH_PANEL_ERROR_OUT_OF_MEMORY);
