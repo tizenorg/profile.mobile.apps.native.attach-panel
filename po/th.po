@@ -28,3 +28,6 @@ msgstr "ไฟล์ส่วนตัว"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "บันทึก\nวิดีโอ"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "เอกสาร"
+

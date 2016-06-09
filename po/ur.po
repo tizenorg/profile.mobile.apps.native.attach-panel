@@ -28,3 +28,6 @@ msgstr "میری فائلیں"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "ریکارڈ\nویڈیو"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "دستاویزات"
+

@@ -145,10 +145,10 @@ innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDE
 	},
 	{
 		.appid = "attach-panel-document",
-		.name = "Document",
+		.name = "IDS_RCS_TAB3_DOCUMENTS_ABB2",
 		.operation = APP_CONTROL_OPERATION_CREATE_CONTENT,
 		.selection_mode = "single",
-		.tabbar_name = "Document",
+		.tabbar_name = "IDS_RCS_TAB3_DOCUMENTS_ABB2",
 		.content_category = ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT,
 		.is_ug = ATTACH_PANEL_CONTENT_CATEGORY_UG,
 	},

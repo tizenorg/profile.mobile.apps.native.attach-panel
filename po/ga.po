@@ -28,3 +28,6 @@ msgstr "Mo Chomhaid"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "Taifead\nfíseán"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Doiciméid"
+

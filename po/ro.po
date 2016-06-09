@@ -17,14 +17,17 @@ msgid "IDS_COM_BUTTON2_VIDEOS"
 msgstr "Videoclipuri"
 
 msgid "IDS_COM_BUTTON2_AUDIO_FILES"
-msgstr "Fişiere audio"
+msgstr "Fișiere audio"
 
 msgid "IDS_COM_BUTTON2_CONTACTS"
 msgstr "Contacte"
 
 msgid "IDS_COM_BUTTON_MY_FILES_ABB"
-msgstr "Fiş. mele"
+msgstr "Fiș. mele"
 
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "Înreg.\nvideo"
+
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Documente"
 

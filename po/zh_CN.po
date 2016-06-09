@@ -5,7 +5,7 @@ msgid "IDS_COM_TAB4_IMAGES_ABB2"
 msgstr "图片"
 
 msgid "IDS_COM_TAB4_CAMERA"
-msgstr "照相机"
+msgstr "相机"
 
 msgid "IDS_COM_TAB4_VOICE"
 msgstr "语音"
@@ -27,4 +27,7 @@ msgstr "我的文件"
 
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "录制\n视频"
+
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "文档"
 

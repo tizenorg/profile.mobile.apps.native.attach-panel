@@ -28,3 +28,6 @@ msgstr "ჩემი ფაილები"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "ვიდეოს\nჩაწერა"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "დოკუმენტები"
+

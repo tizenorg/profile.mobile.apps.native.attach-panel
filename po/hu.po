@@ -28,3 +28,6 @@ msgstr "Saját fájlok"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "Videó-\nrögzítés"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Dokumentumok"
+

@@ -1,0 +1,33 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "ক্যালেন্ডার"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "ছবি"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "ক্যামেরা"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "কণ্ঠ"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "আরো"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "ভিডিওগুলো"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "অডিও ফাইল"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "পরিচিতিগুলো"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "আমার ফাইল"
+
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "ভিডিও\nরেকর্ড"
+
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "নথি"
+

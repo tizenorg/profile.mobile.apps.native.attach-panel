@@ -28,3 +28,6 @@ msgstr "Nire fitxat."
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "Grabatu\nbideoa"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Dokumentuak"
+

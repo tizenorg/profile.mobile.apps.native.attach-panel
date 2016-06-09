@@ -1,0 +1,33 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "ປະຕິທິນ"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "ຮູບ"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "ກ້ອງຖ່າຍຮູບ"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "ສຽງ"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "ຕື່ມອີກ"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "ວິດີໂອ"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "ໄຟລ໌ສຽງ"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "ຜູ້ຕິດຕໍ່"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "ໄຟລ໌ຂອງຂ້ອຍ"
+
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "ບັນທຶກ\nວິດີໂອ"
+
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "ເອກະສານ"
+

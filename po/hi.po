@@ -28,3 +28,6 @@ msgstr "मेरी फाइलें"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "वीडियो\nरिकॉर्ड करे"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "दस्तावेज"
+

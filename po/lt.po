@@ -28,3 +28,6 @@ msgstr "Mano failai"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "Įraš.\nvaiz.įr."
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Dokumentai"
+

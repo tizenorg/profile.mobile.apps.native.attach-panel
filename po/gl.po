@@ -28,3 +28,6 @@ msgstr "Os meus arqu."
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "Gravar\nvídeo"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Documentos"
+

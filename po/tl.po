@@ -1,0 +1,33 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "Kalendaryo"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "Mga imahe"
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "Camera"
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "Boses"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "Marami pa"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "Mga video"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "Mga audio file"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "Mga Contact"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "Mga File Ko"
+
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "Mag-record\nng video"
+
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "Mga dokumento"
+

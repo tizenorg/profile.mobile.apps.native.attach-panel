@@ -28,3 +28,6 @@ msgstr "我的檔案"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "錄影"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "文件"
+

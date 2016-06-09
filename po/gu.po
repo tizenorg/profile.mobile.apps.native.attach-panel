@@ -28,3 +28,6 @@ msgstr "મારી ફાઇલ્સ"
 msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
 msgstr "વિડિયો\nરેકોર્ડ કરો"
 
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "દસ્તાવેજો"
+

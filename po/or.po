@@ -1,0 +1,33 @@
+msgid "IDS_EMAIL_BUTTON2_CALENDAR"
+msgstr "କ୍ୟାଲେଣ୍ଡର୍"
+
+msgid "IDS_COM_TAB4_IMAGES_ABB2"
+msgstr "ଫଟୋଗୁ."
+
+msgid "IDS_COM_TAB4_CAMERA"
+msgstr "କ୍ୟାମେ."
+
+msgid "IDS_COM_TAB4_VOICE"
+msgstr "ଭଏସ୍‌"
+
+msgid "IDS_COM_TAB4_MORE_ABB"
+msgstr "ଅଧିକ"
+
+msgid "IDS_COM_BUTTON2_VIDEOS"
+msgstr "ଭିଡିଓ‌ଗୁଡିକ"
+
+msgid "IDS_COM_BUTTON2_AUDIO_FILES"
+msgstr "ଅଡିଓ ଫାଇଲଗୁଡିକ"
+
+msgid "IDS_COM_BUTTON2_CONTACTS"
+msgstr "ସମ୍ପର୍କଗୁଡିକ"
+
+msgid "IDS_COM_BUTTON_MY_FILES_ABB"
+msgstr "ମୋ ଫାଇଲଗୁଡିକ"
+
+msgid "IDS_IDLE_BUTTON2_RECORD_NVIDEO_ABB"
+msgstr "ଭିଡିଓ\nରେକର୍ଡ"
+
+msgid "IDS_RCS_TAB3_DOCUMENTS_ABB2"
+msgstr "ଡକ୍ୟୁମେଣ୍ଟଗୁଡିକ"
+
