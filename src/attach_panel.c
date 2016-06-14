@@ -417,7 +417,7 @@ static void __iter_cb(const char *key, const int type, bundle_keyval_t *kv, void
 #define SMACK_LABEL_LEN 255
 static int __check_privilege(const char *privilege)
 {
-	cynara *p_cynara;
+	cynara *p_cynara = NULL;
 
 	int fd = 0;
 	int ret = 0;
@@ -430,7 +430,7 @@ static int __check_privilege(const char *privilege)
 	goto_if(ret != CYNARA_API_SUCCESS, OUT);
 
 	fd = open("/proc/self/attr/current", O_RDONLY);
-	goto_if (fd < 0, OUT);
+	goto_if(fd < 0, OUT);
 
 	ret = read(fd, subject_label, SMACK_LABEL_LEN);
 	if (ret < 0) {
@@ -443,7 +443,7 @@ static int __check_privilege(const char *privilege)
 	snprintf(uid, 10, "%d", getuid());
 
 	ret = cynara_check(p_cynara, subject_label, client_session, uid, privilege);
-	goto_if (ret != CYNARA_API_ACCESS_ALLOWED, OUT);
+	goto_if(ret != CYNARA_API_ACCESS_ALLOWED, OUT);
 
 	ret = 0;
 
