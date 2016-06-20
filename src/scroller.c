@@ -40,7 +40,7 @@ struct _event_cb {
 typedef struct _event_cb event_cb_s;
 
 
-
+//LCOV_EXCL_START
 int _scroller_is_scrolling(Evas_Object *scroller)
 {
 	retv_if(!scroller, 0);
@@ -182,7 +182,7 @@ static void __resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		elm_scroller_page_show(scroller, attach_panel->cur_page_no, 0);
 	}
 }
-
+//LCOV_EXCL_STOP
 
 
 Evas_Object *_scroller_create(Evas_Object *ui_manager, attach_panel_h attach_panel)
@@ -266,7 +266,7 @@ void _scroller_append_page(Evas_Object *scroller, Evas_Object *page)
 }
 
 
-
+//LCOV_EXCL_START
 void _scroller_remove_page(Evas_Object *scroller, Evas_Object *page)
 {
 	Evas_Object *box = NULL;
@@ -329,7 +329,7 @@ void _scroller_bring_in_page(Evas_Object *scroller, Evas_Object *page, int *cur_
 
 	elm_scroller_page_bring_in(scroller, index, 0);
 }
-
+//LCOV_EXCL_STOP
 
 
 void _scroller_resize(Evas_Object *scroller, int width, int height)

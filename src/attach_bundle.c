@@ -51,7 +51,7 @@ static void __foreach_bundle_to_add_cb(const char *key, const int type, bundle_k
 		ret = app_control_add_extra_data(app_control, key, basic_val);
 		ret_if(ret != APP_CONTROL_ERROR_NONE);
 		break;
-
+//LCOV_EXCL_START
 	case BUNDLE_TYPE_STR_ARRAY:
 		ret = bundle_keyval_get_array_val(kv, &arr, &array_length, &array_element_size);
 		ret_if(ret != BUNDLE_ERROR_NONE);
@@ -78,7 +78,7 @@ static void __foreach_bundle_to_add_cb(const char *key, const int type, bundle_k
 		ret = app_control_add_extra_data_array(app_control, key, (const char **) arr, array_length);
 		ret_if(ret != APP_CONTROL_ERROR_NONE);
 		break;
-
+//LCOV_EXCL_STOP
 	default:
 		_E("There is wrong type");
 		break;
@@ -99,7 +99,7 @@ int _bundle_add_to_app_control(bundle *b, app_control_h app_control)
 }
 
 
-
+//LCOV_EXCL_START
 static void __foreach_bundle_to_change_cb(const char *key, const int type, bundle_keyval_t *kv, void *data)
 {
 	bundle *origin = data;
@@ -181,3 +181,5 @@ int _bundle_add_to_bundle(bundle *origin, bundle *replace)
 
 	return ATTACH_PANEL_ERROR_NONE;
 }
+
+//LCOV_EXCL_STOP

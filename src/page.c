@@ -63,7 +63,7 @@ ERROR:
 }
 
 
-
+//LCOV_EXCL_START
 void _page_destroy(Evas_Object *page)
 {
 	Evas_Object *bg = NULL;
@@ -92,3 +92,4 @@ void _page_resize(Evas_Object *page, int width, int height)
 	evas_object_size_hint_min_set(bg, width, height);
 	evas_object_size_hint_max_set(bg, width, height);
 }
+//LCOV_EXCL_STOP

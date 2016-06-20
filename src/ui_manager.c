@@ -248,7 +248,7 @@ static void __remove_content_categories(Evas_Object *ui_manager)
 }
 
 
-
+//LCOV_EXCL_START
 static void __resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
 	Evas_Object *ui_manager = obj;
@@ -262,7 +262,6 @@ static void __resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	evas_object_geometry_get(ui_manager, &x, &y, &w, &h);
 	_D("ui_manager resize(%d, %d, %d, %d)", x, y, w, h);
 }
-
 
 
 static void _change_tab_cb(Evas_Object *toolbar, int event_type, void *event_info, void *data)
@@ -416,7 +415,7 @@ static void __key_back_cb(void *data, Evas_Object *obj, void *event_info)
 	_content_list_set_pause(attach_panel->content_list, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 	_gesture_hide(attach_panel);
 }
-
+//LCOV_EXCL_STOP
 
 
 Evas_Object *_ui_manager_create(attach_panel_h attach_panel)

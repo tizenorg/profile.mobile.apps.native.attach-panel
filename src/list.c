@@ -33,6 +33,7 @@ static struct {
 	.ordering = 1,
 };
 
+//LCOV_EXCL_START
 static int __rua_stat_tag_iter_cb(const char *rua_stat_tag, void *data)
 {
 	Eina_List *content_list = data;
@@ -80,7 +81,7 @@ static int __sort_cb(const void *d1, const void *d2)
 		return (strcmp(content_info1->innate_content_info->appid, content_info2->innate_content_info->appid));
 	}
 }
-
+//LCOV_EXCL_STOP
 
 
 Eina_List * _list_sort_by_rua(Eina_List *content_list)

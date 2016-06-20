@@ -42,7 +42,7 @@ static const char *const PRIVATE_DATA_KEY_ANIMATOR = "p_tm";
 static const char *const DEFAULT_ICON = "/usr/share/icons/A01-1_icon_Menu.png";
 
 
-
+//LCOV_EXCL_START
 Eina_Bool _grid_can_flick(attach_panel_h attach_panel)
 {
 	content_s *current_content_info = NULL;
@@ -181,7 +181,7 @@ static Evas_Object *__content_get(void *data, Evas_Object *obj, const char *part
 	}
 	return NULL;
 }
-
+//LCOV_EXCL_STOP
 
 
 static void __del(void *data, Evas_Object *obj)
@@ -190,7 +190,7 @@ static void __del(void *data, Evas_Object *obj)
 }
 
 
-
+//LCOV_EXCL_START
 static void __reply_cb(app_control_h request, app_control_h reply, app_control_result_e result, void *user_data)
 {
 	content_s *content_info = user_data;
@@ -393,7 +393,7 @@ OUT:
 
 	return ECORE_CALLBACK_CANCEL;
 }
-
+//LCOV_EXCL_STOP
 
 
 void _grid_refresh(Evas_Object *grid)
@@ -415,7 +415,7 @@ void _grid_refresh(Evas_Object *grid)
 }
 
 
-
+//LCOV_EXCL_START
 static void __edge_top_cb(void *data, Evas_Object *grid, void *event_info)
 {
 	ret_if(!grid);
@@ -438,7 +438,7 @@ static void __lang_changed_cb(void *data, Evas_Object *grid, void *event_info)
 	ret_if(!grid);
 	elm_gengrid_realized_items_update(grid);
 }
-
+//LCOV_EXCL_STOP
 
 
 Evas_Object *_grid_create(Evas_Object *page, attach_panel_h attach_panel)

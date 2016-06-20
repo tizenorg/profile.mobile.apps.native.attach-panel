@@ -185,7 +185,7 @@ static void __attach_panel_rect_del(Evas_Object *rect)
 }
 
 
-
+//LCOV_EXCL_START
 static void __rotate_cb(void *data, Evas_Object *obj, void *event)
 {
 	Evas_Object *win = obj;
@@ -256,6 +256,7 @@ static void __rotate_cb(void *data, Evas_Object *obj, void *event)
 	_scroller_resize(attach_panel->scroller, w, 0);
 	elm_scroller_page_show(attach_panel->scroller, attach_panel->cur_page_no, 0);
 }
+//LCOV_EXCL_STOP
 
 
 
@@ -327,6 +328,7 @@ EXPORT_API int attach_panel_create(Evas_Object *conformant, attach_panel_h *atta
 	return ATTACH_PANEL_ERROR_NONE;
 
 ERROR:
+//LCOV_EXCL_START
 	if (panel->ui_manager) {
 		elm_object_part_content_unset(conformant, "elm.swallow.attach_panel");
 		_ui_manager_destroy(panel->ui_manager);
@@ -339,6 +341,7 @@ ERROR:
 	free(panel);
 
 	return ATTACH_PANEL_ERROR_NOT_INITIALIZED;
+//LCOV_EXCL_STOP
 }
 
 
@@ -417,7 +420,7 @@ static void __iter_cb(const char *key, const int type, bundle_keyval_t *kv, void
 #define SMACK_LABEL_LEN 255
 static int __check_privilege(const char *privilege)
 {
-	cynara *p_cynara;
+	cynara *p_cynara = NULL;
 
 	int fd = 0;
 	int ret = 0;
@@ -606,6 +609,7 @@ EXPORT_API int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_p
 	}
 
 	if (innate_content_info[content_category-1].is_ug) {
+//LCOV_EXCL_START
 		if (!content_info->content) {
 			_D("Create ug because ug is not created yet");
 			content_info->content = _ui_manager_create_content(content_info->page, content_info, attach_panel);
@@ -631,6 +635,7 @@ EXPORT_API int attach_panel_set_extra_data(attach_panel_h attach_panel, attach_p
 		ug_send_message(ui_gadget, app_control);
 		ret = app_control_destroy(app_control);
 		retv_if(APP_CONTROL_ERROR_NONE != ret, ATTACH_PANEL_ERROR_OUT_OF_MEMORY);
+//LCOV_EXCL_STOP
 	} else {
 		// In case of app, bundle is not used imediately.
 		// when app is launching, bundle is used.

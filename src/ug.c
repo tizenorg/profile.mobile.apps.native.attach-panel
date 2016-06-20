@@ -27,7 +27,7 @@
 #include "log.h"
 
 
-
+//LCOV_EXCL_START
 static void __result_cb(ui_gadget_h ui_gadget, app_control_h result, void *priv)
 {
 	content_s *content_info = priv;
@@ -145,7 +145,6 @@ static void __result_cb(ui_gadget_h ui_gadget, app_control_h result, void *priv)
 }
 
 
-
 static void __resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
 	Evas_Object *ui_manager = obj;
@@ -157,7 +156,7 @@ static void __resize_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	evas_object_geometry_get(ui_manager, &x, &y, &w, &h);
 	_D("%s resize(%d, %d, %d, %d)", data, x, y, w, h);
 }
-
+//LCOV_EXCL_STOP
 
 
 Evas_Object *_ug_create(const char *appid, const char *operation, const char *selection_mode, const char *mime, bundle *b, content_s *content_info)

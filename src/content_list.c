@@ -86,7 +86,7 @@ void _content_list_send_message(Eina_List *list, const char *key, const char *va
 }
 
 
-
+//LCOV_EXCL_START
 void _content_list_send_message_to_content(Eina_List *list, const char *key, const char *value, int cur_page_no)
 {
 	content_s *content_info = NULL;
@@ -135,7 +135,7 @@ void _content_list_send_message_to_content(Eina_List *list, const char *key, con
 	ret = app_control_destroy(app_control);
 	ret_if(APP_CONTROL_ERROR_NONE != ret);
 }
-
+//LCOV_EXCL_STOP
 
 
 void _content_list_set_pause(Eina_List *list, int is_ug)
@@ -150,6 +150,7 @@ void _content_list_set_pause(Eina_List *list, int is_ug)
 		innate_content_s *innate_content_info = content_info->innate_content_info;
 		continue_if(!innate_content_info);
 		if (is_ug == innate_content_info->is_ug) {
+//LCOV_EXCL_START
 			ui_gadget_h ui_gadget = NULL;
 
 			ui_gadget = evas_object_data_get(content_info->content, DATA_KEY_UG);
@@ -160,6 +161,7 @@ void _content_list_set_pause(Eina_List *list, int is_ug)
 #ifdef UG_LIFECYCLE_API_SUPPORTED
 			ug_pause_ug(ui_gadget);
 #endif
+//LCOV_EXCL_STOP
 		}
 	}
 }
@@ -178,6 +180,7 @@ void _content_list_set_resume(Eina_List *list, int is_ug)
 		innate_content_s *innate_content_info = content_info->innate_content_info;
 		continue_if(!innate_content_info);
 		if (is_ug == innate_content_info->is_ug) {
+//LCOV_EXCL_START
 			ui_gadget_h ui_gadget = NULL;
 
 			ui_gadget = evas_object_data_get(content_info->content, DATA_KEY_UG);
@@ -188,6 +191,7 @@ void _content_list_set_resume(Eina_List *list, int is_ug)
 #ifdef UG_LIFECYCLE_API_SUPPORTED
 			ug_resume_ug(ui_gadget);
 #endif
+//LCOV_EXCL_STOP
 		}
 	}
 }

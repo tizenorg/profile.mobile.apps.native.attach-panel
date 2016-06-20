@@ -51,12 +51,12 @@ attach_panel_state_e _gesture_get_state(void)
 }
 
 
-
+//LCOV_EXCL_START
 void _gesture_set_state(attach_panel_state_e state)
 {
 	gesture_info_s.attach_panel_state = state;
 }
-
+//LCOV_EXCL_STOP
 
 
 static Elm_Transit_Effect *__custom_effect_new(Evas_Coord from_h, Evas_Coord to_h)
@@ -136,6 +136,7 @@ static void __attach_panel_transit_set(attach_panel_h attach_panel, Evas_Coord f
 
 	if (gesture_info_s.transit) {
 		_E("Transit is already activating");
+//LCOV_EXCL_START
 		if (attach_panel->cur_event_state == ATTACH_PANEL_EVENT_HIDE_START) {
 			if (gesture_info_s.attach_panel_state != ATTACH_PANEL_STATE_HIDE) {
 				if (attach_panel->event_cb) {
@@ -152,6 +153,7 @@ static void __attach_panel_transit_set(attach_panel_h attach_panel, Evas_Coord f
 			}
 		}
 		return;
+//LCOV_EXCL_STOP
 	}
 
 	custom_effect = __custom_effect_new(from_h, to_h);
@@ -195,13 +197,13 @@ void _gesture_show(attach_panel_h attach_panel)
 	elm_config_focus_autoscroll_mode_set(ELM_FOCUS_AUTOSCROLL_MODE_NONE);
 
 	if (attach_panel->rotate) {
+//LCOV_EXCL_START
 		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_MULTIPLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 		attach_panel->attach_panel_land_state = ATTACH_PANEL_STATE_FULL;
 		gesture_info_s.attach_panel_state = ATTACH_PANEL_STATE_FULL;
 		__attach_panel_transit_set(attach_panel, 0, attach_panel->transit_height, TRANSIT_DURATION);
 		elm_object_signal_emit(attach_panel->conformant, "elm,state,attach_panel,show,full", "");
-
-
+//LCOV_EXCL_STOP
 	} else {
 		_content_list_send_message(attach_panel->content_list, APP_CONTROL_DATA_SELECTION_MODE, SELECTION_MODE_SINGLE, ATTACH_PANEL_CONTENT_CATEGORY_UG);
 		elm_scroller_movement_block_set(attach_panel->grid, ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL);
@@ -233,7 +235,7 @@ void _gesture_hide(attach_panel_h attach_panel)
 }
 
 
-
+//LCOV_EXCL_START
 void _gesture_set_full_mode(attach_panel_h attach_panel)
 {
 	if (attach_panel->rotate) {
@@ -320,7 +322,7 @@ static Evas_Event_Flags __flick_end_cb(void *data, void *event_info)
 
 	return EVAS_EVENT_FLAG_ON_HOLD;
 }
-
+//LCOV_EXCL_STOP
 
 
 Evas_Object *_gesture_create(attach_panel_h attach_panel)
