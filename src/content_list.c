@@ -25,10 +25,6 @@
 #include "content_list.h"
 #include "log.h"
 
-/* This APIs are not supported
-#define UG_LIFECYCLE_API_SUPPORTED
-*/
-
 
 
 void _content_list_send_message(Eina_List *list, const char *key, const char *value, int is_ug)
@@ -157,9 +153,7 @@ void _content_list_set_pause(Eina_List *list, int is_ug)
 				_D("Fail to get the ui gadget");
 				continue;
 			}
-#ifdef UG_LIFECYCLE_API_SUPPORTED
 			ug_pause_ug(ui_gadget);
-#endif
 		}
 	}
 }
@@ -185,9 +179,7 @@ void _content_list_set_resume(Eina_List *list, int is_ug)
 				_D("Fail to get the ui gadget");
 				continue;
 			}
-#ifdef UG_LIFECYCLE_API_SUPPORTED
 			ug_resume_ug(ui_gadget);
-#endif
 		}
 	}
 }
