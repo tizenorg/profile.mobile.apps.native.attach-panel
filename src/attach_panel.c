@@ -44,7 +44,7 @@ static const char *const PLATFORM_FEATURE_MICROPHONE = "tizen.org/feature/microp
 
 
 
-innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_VIDEO_RECORDER] = {
+innate_content_s innate_content_info[ATTACH_PANEL_CONTENT_CATEGORY_DOCUMENT] = {
 	{
 		.appid = "attach-panel-gallery",
 		.name = "IDS_COM_TAB4_IMAGES_ABB2",
